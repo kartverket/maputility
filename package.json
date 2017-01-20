@@ -1,0 +1,20 @@
+{
+  "name": "maputility",
+  "version": "0.0.1",
+  "author": "Leif Andreas Rudlang",
+  "private": true,
+  "scripts": {
+    "test": "jest",
+    "g2d": "node tools/geojson2nav.js data/input_graph.json data/input_area.json",
+    "mkdocs": "jsdoc --configure .jsdoc.json --verbose"
+  },
+  "dependencies": {
+    "priorityqueuejs": "^1.0.0"
+  },
+  "jest": {
+    "preset": "jest-react-native"
+  },
+  "devDependencies": {
+    "minami": "^1.1.1"
+  }
+}
