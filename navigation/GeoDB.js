@@ -1,5 +1,6 @@
 import GeometryCache, { Point } from "../geometry/GeometryCache";
 import Vertice from "./Vertice";
+import Vector2 from "../vector/Vector2";
 
 /**
 * GeoDB, Class to handle nav-mesh data
@@ -98,24 +99,22 @@ class GeoDB {
   * @return {array} Array containing approximate clearance data, returns null if not found
   */
   getEdgeClearance(idA, idB) {
+
     var v = this.getVerticeById(idA);
+
     if(v == null) {
-      return null;
+      return 0;
     }
 
     var index = v.adj.indexOf(idB);
     if(index === -1) {
-      return null;
+      return 0;
     }
 
     var rIndex = this.routeIndex[idA][index];
     var aIndex = Math.abs(rIndex);
-
-    if(rIndex !== aIndex) { // Signed index, route database contains B => A, so reverse it to get A => B
-      return this.routeIndex[aIndex].reverse();
-    }
-
-    return this.routeIndex[aIndex];
+    console.log("FOUND CLERANCE");
+    return this.routeData[aIndex];
   }
 
   /**
@@ -127,6 +126,11 @@ class GeoDB {
   */
   getVerticeById(id) {
     return this.cache.getElementById(id);
+  }
+
+  getCoordinateFromId(id) {
+    var e = this.cache.getElementById(id);
+    return new Vector2(e.x, e.y);
   }
 
   /**

@@ -20,6 +20,14 @@
 * - Leif Andreas Rudlang
 */
 
+
+/*
+*
+* TODO split up long lines into new points and manage adjacents, use new point if it is reachable from new adjacent points
+* TODO Check if non-adjacent points is directly reachable from a point, and index properly if it is
+* TODO integrate into minimum clearance area per edge
+*/
+
 var fs = require("fs");
 var path = require("path");
 
@@ -406,15 +414,17 @@ function mergeAreaBetween(idA, idB) {
   var mul = len / checks;
   var dxn = dx / len;
   var dyn = dy / len;
-  var arr = [];
+  var min = Number.MAX_VALUE;
 
   if(len <= 0.01) {
-    arr.push(minimumClearance(x, y));
+    min = minimumClearance(x, y);
   }else{
+
     for(var i = 0; i <= checks; i++) {
       var px = x + dxn * (mul * i);
       var py = y + dyn * (mul * i);
-      arr.push(minimumClearance(px, py));
+      var n = minimumClearance(px, py);
+      min = min > n ? n : min;
     }
   }
 
@@ -434,7 +444,7 @@ function mergeAreaBetween(idA, idB) {
     areaChecked[idB] = data;
   }
 
-  areaIndex.push(arr);
+  areaIndex.push(min);
   return areaChecked[idA][idB];
 }
 
@@ -459,7 +469,7 @@ function pointLineDistance(x, y, sx, sy, ex, ey) {
   var a = ( dy * x ) - ( dx * y ) + ( ex * sy ) - ( ey * sx );
   var b = Math.sqrt(( dx * dx ) + ( dy * dy ));
 
-  if(b == 0) {
+  if(b === 0) {
     return 0;
   }
 

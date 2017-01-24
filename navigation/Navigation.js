@@ -1,5 +1,7 @@
 import GeoDB from "./GeoDB";
 import AStarPathfinder from "./AStarPathfinder";
+import RouteRenderer from "./RouteRenderer";
+import Vector2 from "../vector/Vector2";
 "use strict";
 
 /**
@@ -47,9 +49,19 @@ class Navigation {
   * @param {number} y Y coordinate
   */
   setOrigin(x, y) {
-    this.origin = {x, y};
+    this.origin = new Vector2(x, y);
     var test = this.findClosestNode(this.origin.x, this.origin.y);
     console.log("node", test);
+  }
+
+  /**
+  * Gets the origin coordinates
+  *
+  * @this {Navigation}
+  * @return {Vector2}
+  */
+  getOrigin(x, y) {
+    return this.origin;
   }
 
   /**
@@ -60,7 +72,17 @@ class Navigation {
   * @param {number} y Y coordinate
   */
   setDestination(x, y) {
-    this.destination = {x, y};
+    this.destination = new Vector2(x, y);
+  }
+
+  /**
+  * Gets the destination coordinates
+  *
+  * @this {Navigation}
+  * @return {Vector2}
+  */
+  getDestination(x, y) {
+    return this.destination;
   }
 
   /**
@@ -101,6 +123,16 @@ class Navigation {
   */
   findClosestNode(x, y) {
     return this.db.findClosestNode(x, y);
+  }
+
+  /**
+  * Creates a new route renderer
+  *
+  * @this {Navigation}
+  * @return {RouteRenderer}
+  */
+  makeRouteRenderer() {
+    return new RouteRenderer(this.db);
   }
 }
 

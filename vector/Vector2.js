@@ -114,11 +114,23 @@ class Vector2 {
   * @this {Vector2}
   */
   normalize() {
-    var len = this.length;
+    var len = this.length();
     if(len !== 0) {
       this.x = this.x / len;
       this.y = this.y / len;
     }
+  }
+
+  /**
+  * Sets the X and Y component of this vector
+  *
+  * @this {Vector2}
+  * @param {number} x
+  * @param {number} y
+  */
+  set(x, y) {
+    this.x = x;
+    this.y = y;
   }
 
   /**
@@ -145,6 +157,16 @@ class Vector2 {
     }else{
       return new Vector2(this.x, this.y);
     }
+  }
+
+  /**
+  * Returns a array representing this vector
+  *
+  * @this {Vector2}
+  * @return {array} [x, y]
+  */
+  toArray() {
+    return [this.x, this.y];
   }
 }
 

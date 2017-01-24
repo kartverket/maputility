@@ -1,6 +1,7 @@
 import Pathfinder from "./Pathfinder";
 import PriorityQueue from "priorityqueuejs";
 import BinaryFilter from "./BinaryFilter";
+import Vector2 from "../vector/Vector2";
 
 /**
 * AStarPathfinder, class to perform pathfinding using the A* Algorithm
@@ -91,15 +92,11 @@ class AStarPathfinder extends Pathfinder {
   * @return {array} {array} Array of route coordinates {x, y, index}
   */
   reconstructPath(start, end) {
-    var path = [{x: end.x, y: end.y, id: end.index}], curr = end;
+    var path = [end.index], curr = end;
     while(curr !== start && curr.cameFrom !== null) {
-      if(curr.adj.indexOf(curr.cameFrom.index) === -1) {
-        console.log("NOT ADJACENT WUT", curr.index, curr.adj, curr.cameFrom.adj, curr.cameFrom.index);
-      }
       curr = curr.cameFrom;
-      path.unshift({x: curr.x, y: curr.y, id: curr.index});
+      path.unshift(curr.index);
     }
-    
     this.db.reset();
     return path;
   }
