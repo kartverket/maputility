@@ -102,8 +102,10 @@ class Geometry {
   distanceFromLine(sx, sy, ex, ey) {
     var dx = ex - sx;
     var dy = ey - sy;
+
     var a = ( dy * this.x ) - ( dx * this.y ) + ( ex * sy ) - ( ey * sx );
     var b = Math.sqrt(( dx * dx ) + ( dy * dy ));
+
     return Math.abs(a) / b;
   }
 
@@ -132,6 +134,25 @@ class Geometry {
     return this.visibility;
   }
 
+  /**
+  * Get a mapbox annotation
+  *
+  * @this {Geometry}
+  * @param {string} id
+  * @return {object}
+  */
+  render(id) {
+    return {
+      id: id,
+      type: "point",
+      coordinates: [this.x, this.y],
+      alpha: 1,
+      fillAlpha: 1,
+      fillColor: "black",
+      strokeColor: "black",
+      strokeWidth: 1
+    };
+  }
 }
 
 export default Geometry;

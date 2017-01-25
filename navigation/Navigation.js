@@ -1,7 +1,9 @@
 import GeoDB from "./GeoDB";
+import MapFeatures from "./MapFeatures";
 import AStarPathfinder from "./AStarPathfinder";
 import RouteRenderer from "./RouteRenderer";
 import Vector2 from "../vector/Vector2";
+import Route from "./Route";
 "use strict";
 
 /**
@@ -24,7 +26,9 @@ class Navigation {
   */
   constructor() {
     this.db = new GeoDB();
+    this.features = new MapFeatures();
     this.db.load();
+    this.features.load();
     this.origin = null;
     this.destination = null;
     this.route = null;
@@ -108,7 +112,9 @@ class Navigation {
       call("Could not locate end node", null);
     } else {
       var astar = new AStarPathfinder(this.db);
-      var route = astar.findShortestPath(start, end);
+      var path = astar.findShortestPath(start, end);
+      var route = new Route(this.db, this.getOrigin(), path, this.getDestination());
+      console.log("features", this.findInRoute(0.001, route));
       call(null, route);
     }
   }
@@ -126,14 +132,17 @@ class Navigation {
   }
 
   /**
-  * Creates a new route renderer
+  * Find data points along the route
   *
   * @this {Navigation}
-  * @return {RouteRenderer}
+  * @param {Route} route
+  * @param {number} radius Distance from route to search
+  * @param {requestCallback} call (err, result)
   */
-  makeRouteRenderer() {
-    return new RouteRenderer(this.db);
+  findInRoute(radius, route) {
+    return this.features.findInRoute(radius, route.waypoints);
   }
+
 }
 
 export default Navigation;

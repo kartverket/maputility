@@ -140,17 +140,9 @@ class GeometryCache {
   * @return {array} List of Geometry objects
   */
   findInLine(radius, x, y, ex, ey) {
-    var result = [], arr = [], i = 0, shape;
+    var result = [];
     this.tree.findIntersectLine(radius, x, y, ex, ey, result);
-
-    for(; i < result.length; i++) { // TODO
-      shape = result[i];
-      if((shape.distanceFromLine(x, y, ex, ey) - shape.radius) <= radius) {
-        arr.push(shape);
-      }
-    }
-
-    return arr;
+    return result;
   }
 
   /**

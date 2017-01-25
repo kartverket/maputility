@@ -113,7 +113,6 @@ class GeoDB {
 
     var rIndex = this.routeIndex[idA][index];
     var aIndex = Math.abs(rIndex);
-    console.log("FOUND CLERANCE");
     return this.routeData[aIndex];
   }
 

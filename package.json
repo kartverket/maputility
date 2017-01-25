@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest",
     "g2d": "node tools/geojson2nav.js data/input_graph.json data/input_area.json",
+    "idx": "node tools/indexfeatures.js data/bunkring.json",
     "mkdocs": "jsdoc --configure .jsdoc.json --verbose"
   },
   "dependencies": {

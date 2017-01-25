@@ -112,6 +112,7 @@ class GeometryTree {
   */
   intersectsLine(radius, sx, sy, ex, ey) {
     var offset = this.element.distanceFromLine(sx, sy, ex, ey);
+    console.log("OFFSET", offset, sx, sy, ex, ey);
     var intersect = this.radius + radius;
     return offset <= intersect;
   }
@@ -148,12 +149,23 @@ class GeometryTree {
   * @param {array} result Result array containing Geometry objects
   */
   findIntersectLine(radius, x, y, ex, ey, result) {
-    var n = null, i = 0;
+    var n = null, i = 0, offset = 0, intersect = 0;
     for(; i < 4; i++) {
       n = this.children[i];
-      if(n !== null && n.intersectsLine(radius, x, y)){
-        result.push(n.element);
-        n.findIntersectLine(radius, x, y, result);
+
+      if(n === null) {
+        continue;
+      }
+
+      offset = n.element.distanceFromLine(x, y, ex, ey);
+      intersect = n.radius + radius;
+
+      if(offset <= intersect) {
+        if(offset < radius) {
+          console.log(offset);
+          result.push(n.element);
+        }
+        n.findIntersectLine(radius, x, y, ex, ey, result);
       }
     }
   }

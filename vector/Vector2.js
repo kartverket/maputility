@@ -1,5 +1,8 @@
 "use strict";
 
+
+const RADIUS_EARTH = 6371;
+
 /**
 * Vector2
 * @author Leif Andreas Rudlang
@@ -141,6 +144,57 @@ class Vector2 {
   */
   length() {
     return Math.sqrt(( this.x * this.x ) + ( this.y * this.y ));
+  }
+
+  /**
+  * Pythagoric distance (on a plane)
+  *
+  * @this {Vector2}
+  * @param {Vector2} vec2
+  * @return {number}
+  */
+  distance(vec2) {
+    var dx = this.x - vec2.x;
+    var dy = this.y - vec2.y;
+    return Math.sqrt((dx * dx) + (dy * dy));
+  }
+
+  /**
+  * Returns the geographic distance between this and the input coordinate
+  * X = lat, Y = lon
+  * @this {Vector2}
+  * @param {Vector2} vec2
+  * @return {number} distance
+  */
+  geographicDistance(vec2) {
+    var dLat = (vec2.x-this.x) * (Math.PI / 180);
+    var dLon = (vec2.y-this.y) * (Math.PI / 180);
+    var lat1 = this.x * (Math.PI / 180);
+    var lat2 = vec2.x * (Math.PI / 180);
+    var a = (
+      (Math.sin(dLat/2) * Math.sin(dLat/2)) +
+      (Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2))
+    );
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return RADIUS_EARTH * c;
+  }
+
+
+  distanceFromLine(p0, p1) {
+    var l2 = p0.distance(p1);
+
+    if(l2 === 0) {
+      return this.distance(p0);
+    }
+
+    var t = ((this.x - p0.x) * (p1.x - p0.x) + (this.y - p0.y) * (p1.y - p0.y)) / l2;
+    t = Math.max(0, Math.min(1, t));
+    var px = p0.x + (p1.x - p0.x) * t;
+    var py = p0.y + (p1.y - p0.y) * t;
+    var dx = this.x - px;
+    var dy = this.y - py;
+
+    return Math.sqrt((dx * dx) + (dy * dy));
   }
 
   /**
