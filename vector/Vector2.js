@@ -179,7 +179,14 @@ class Vector2 {
     return RADIUS_EARTH * c;
   }
 
-
+  /**
+  * Calculates the distance from a finite line defined by the two input coordinates
+  *
+  * @this {Vector2}
+  * @param {Vector2} p0 Start of line
+  * @param {Vector2} p1 End of line
+  * @return {number} minimum distance from this vector to the line
+  */
   distanceFromLine(p0, p1) {
     var l2 = p0.distance(p1);
 

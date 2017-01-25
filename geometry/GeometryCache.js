@@ -86,15 +86,13 @@ class GeometryCache {
   * @param {number} y Y coordinate
   * @param {Geometry} The closest geometry object in the cache, null if none is found within 2 radius.
   */
-  findClosest(x, y) {
-    var result = [], i = 0, delta = Number.MAX_VALUE, curr = null, d = 0, dx = 0, dy = 0, shape;
-    this.tree.findIntersect(5, x, y, result);
+  findClosest(vec2) {
+    var result = [], i = 0, delta = Number.MAX_VALUE, curr = null, d = 0, shape;
+    this.tree.findIntersect(5, vec2, result);
 
     for(; i < result.length; i++) {
       shape = result[i];
-      dx = x - shape.x;
-      dy = y - shape.y;
-      d = Math.sqrt(( dx * dx ) + ( dy * dy ));
+      d = shape.position.distance(vec2);
       if(d < delta) {
         delta = d;
         curr = shape;
@@ -113,14 +111,14 @@ class GeometryCache {
   * @param {number} y Y coordinate
   * @return {array} List containing geometric objects
   */
-  findInRadius(radius, x, y) {
+  findInRadius(radius, vec2) {
     var result = [], arr = [], i = 0;
-    this.tree.findIntersect(radius, x, y, result);
+    this.tree.findIntersect(radius, vec2, result);
 
     for(; i < result.length; i++) {
       var shape = result[i];
 
-      if(shape.isPointInside(x, y)){
+      if(shape.isPointInside(vec2)){
         arr.push(shape);
       }
     }
@@ -133,15 +131,13 @@ class GeometryCache {
   *
   * @this {GeometryCache}
   * @param {number} radius Maximum distance from line allowed (Threshold)
-  * @param {number} x Start of line X coordinate
-  * @param {number} y Start of line Y coordinate
-  * @param {number} ex End of line X coordinate
-  * @param {number} ey End of line Y coordinate
+  * @param {Vector2} p0 Start line coordinate
+  * @param {Vector2} p1 End line coordinate
   * @return {array} List of Geometry objects
   */
-  findInLine(radius, x, y, ex, ey) {
+  findInLine(radius, p0, p1) {
     var result = [];
-    this.tree.findIntersectLine(radius, x, y, ex, ey, result);
+    this.tree.findIntersectLine(radius, p0, p1, result);
     return result;
   }
 

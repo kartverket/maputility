@@ -20,8 +20,8 @@ class Vertice extends Geometry {
   */
   constructor(x, y) {
     super();
-    this.x = x;
-    this.y = y;
+    this.setX(x);
+    this.setY(y);
     this.index = 0;
     this.adj = null;
     this.gScore = Number.MAX_VALUE;
@@ -48,9 +48,7 @@ class Vertice extends Geometry {
   * @return {number}
   */
   distanceTo(vertice) {
-    var dx = this.x - vertice.x;
-    var dy = this.y - vertice.y;
-    return Math.sqrt(( dx * dx ) + ( dy * dy ));
+    return this.position.distance(vertice.position);
   }
 
   /**

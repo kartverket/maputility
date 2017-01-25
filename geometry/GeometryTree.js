@@ -17,8 +17,6 @@ class GeometryTree {
   */
   constructor(e) {
     this.element = e;
-    this.x = e.x;
-    this.y = e.y;
     this.radius = e.radius;
     this.children = [null, null, null, null];
   }
@@ -30,8 +28,8 @@ class GeometryTree {
   * @param {GeometryTree} tree
   */
   add(tree) {
-    var dx = this.x - tree.x;
-    var dy = this.y - tree.y;
+    var dx = this.element.position.x - tree.element.position.x;
+    var dy = this.element.position.y - tree.element.position.y;
 
     var index = this.toIndex(dx, dy);
     var child = this.children[index];
@@ -87,14 +85,11 @@ class GeometryTree {
   *
   * @this {GeometryTree}
   * @param {number} radius
-  * @param {number} x
-  * @param {number} y
+  * @param {Vector2} vec2
   * @return {boolean} True if intersects
   */
-  intersects(radius, x, y) {
-    var dx = this.x - x;
-    var dy = this.y - y;
-    var offset = Math.sqrt((dx * dx) + (dy * dy));
+  intersects(radius, vec2) {
+    var offset = this.element.position.distance(vec2);
     var intersect = this.radius + radius;
     return offset <= intersect;
   }
@@ -104,15 +99,12 @@ class GeometryTree {
   *
   * @this {GeometryTree}
   * @param {number} radius Radius / Threshold of the Check
-  * @param {number} sx Start-X coordinate of line
-  * @param {number} sy Start-Y coordinate of line
-  * @param {number} ex End-X coordinate of line
-  * @param {number} ey End-Y coordinate of line
+  * @param {Vector2} p0 Start of line
+  * @param {Vector2} p1 End of line
   * @return {boolean} True if intersects
   */
-  intersectsLine(radius, sx, sy, ex, ey) {
-    var offset = this.element.distanceFromLine(sx, sy, ex, ey);
-    console.log("OFFSET", offset, sx, sy, ex, ey);
+  intersectsLine(radius, p0, p1) {
+    var offset = this.element.position.distanceFromLine(p0, p1);
     var intersect = this.radius + radius;
     return offset <= intersect;
   }
@@ -122,17 +114,16 @@ class GeometryTree {
   *
   * @this {GeometryTree}
   * @param {number} radius Radius / Threshold of check
-  * @param {number} x X Coordinate of check
-  * @param {number} y Y Coordinate of check
+  * @param {Vector2} vec2 Coordinate
   * @param {array} result Result array containing Geometry objects
   */
-  findIntersect(radius, x, y, result) {
+  findIntersect(radius, vec2, result) {
     var n = null, i = 0;
     for(; i < 4; i++) {
       n = this.children[i];
-      if(n !== null && n.intersects(radius, x, y)){
+      if(n !== null && n.intersects(radius, vec2)){
         result.push(n.element);
-        n.findIntersect(radius, x, y, result);
+        n.findIntersect(radius, vec2, result);
       }
     }
   }
@@ -142,13 +133,11 @@ class GeometryTree {
   *
   * @this {GeometryTree}
   * @param {number} radius Radius / Threshold of check
-  * @param {number} x Start-X coordinate of line
-  * @param {number} y Start-Y coordinate of line
-  * @param {number} ex End-X coordinate of line
-  * @param {number} ey End-Y coordinate of line
+  * @param {Vector2} p0 Start of line coordinate
+  * @param {Vector2} p1 End of line Coordinate
   * @param {array} result Result array containing Geometry objects
   */
-  findIntersectLine(radius, x, y, ex, ey, result) {
+  findIntersectLine(radius, p0, p1, result) {
     var n = null, i = 0, offset = 0, intersect = 0;
     for(; i < 4; i++) {
       n = this.children[i];
@@ -157,7 +146,7 @@ class GeometryTree {
         continue;
       }
 
-      offset = n.element.distanceFromLine(x, y, ex, ey);
+      offset = n.element.position.distanceFromLine(p0, p1);
       intersect = n.radius + radius;
 
       if(offset <= intersect) {
@@ -165,7 +154,7 @@ class GeometryTree {
           console.log(offset);
           result.push(n.element);
         }
-        n.findIntersectLine(radius, x, y, ex, ey, result);
+        n.findIntersectLine(radius, p0, p1, result);
       }
     }
   }

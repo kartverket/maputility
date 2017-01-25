@@ -25,8 +25,8 @@ class Line extends Geometry {
   calculate() {
     var dx = this.ex - this.sx;
     var dy = this.ey - this.sy;
-    this.x = this.sx + dx / 2;
-    this.y = this.sy + dy / 2;
+    this.setX( this.sx + dx / 2);
+    this.setY( this.sy + dy / 2);
     this.radius = Math.sqrt(( dx * dx ) + ( dy * dy )) / 2;
   }
 

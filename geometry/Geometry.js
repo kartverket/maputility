@@ -1,3 +1,4 @@
+import Vector2 from "../vector/Vector2";
 "use strict";
 
 /**
@@ -15,8 +16,7 @@ class Geometry {
   * @this {Geometry}
   */
   constructor() {
-    this.x = 0;
-    this.y = 0;
+    this.position = new Vector2(0,0);
     this.radius = 0;
     this.zIndex = 0;
     this.visibility = true;
@@ -30,7 +30,17 @@ class Geometry {
   * @return {number}
   */
   getX() {
-    return this.x;
+    return this.position.x;
+  }
+
+  /**
+  * Set the X coordinate position
+  *
+  * @this {Geometry}
+  * @param {number} x
+  */
+  setX(x) {
+    this.position.x = x;
   }
 
   /**
@@ -40,7 +50,17 @@ class Geometry {
   * @return {number}
   */
   getY() {
-    return this.y;
+    return this.position.y;
+  }
+
+  /**
+  * Set the Y coordinate position
+  *
+  * @this {Geometry}
+  * @param {number} y
+  */
+  setY(y) {
+    this.position.y = y;
   }
 
   /**
@@ -93,20 +113,12 @@ class Geometry {
   * Calculate the distance from the center of the geometry object to a line
   *
   * @this {Geometry}
-  * @param {number} sx Start-X coordinate of the line
-  * @param {number} sy Start-Y coordinate of the line
-  * @param {number} ex End-X coordinate of the line
-  * @param {number} ey End-Y coordinate of the line
+  * @param {Vector2} p0 Start coordinate of line
+  * @param {Vector2} p1 End coordinate of line
   * @return {number} Distance from line
   */
-  distanceFromLine(sx, sy, ex, ey) {
-    var dx = ex - sx;
-    var dy = ey - sy;
-
-    var a = ( dy * this.x ) - ( dx * this.y ) + ( ex * sy ) - ( ey * sx );
-    var b = Math.sqrt(( dx * dx ) + ( dy * dy ));
-
-    return Math.abs(a) / b;
+  distanceFromLine(p0, p1) {
+    return this.position.distanceFromLine(p0, p1)
   }
 
   /**
@@ -117,10 +129,8 @@ class Geometry {
   * @param {number} y Y-Coordinate of point
   * @return {boolean} True if point is inside
   */
-  isPointInside(x, y) {
-    var dx = this.x - x;
-    var dy = this.y - y;
-    var offset = Math.sqrt(( dx * dx ) + ( dy * dy ));
+  isPointInside(vec2) {
+    var offset = this.position.distance(vec2);
     return offset <= this.radius;
   }
 

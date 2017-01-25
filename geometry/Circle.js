@@ -12,8 +12,8 @@ class Circle extends Geometry {
 
   constructor(radius, x, y) {
     super();
-    this.x = x;
-    this.y = y;
+    this.setX(x);
+    this.setY(y);
     this.radius = radius;
   }
 }

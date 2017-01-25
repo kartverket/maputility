@@ -49,13 +49,11 @@ class Navigation {
   * Sets the origin coordinate of a route
   *
   * @this {Navigation}
-  * @param {number} x X coordinate
-  * @param {number} y Y coordinate
+  * @param {Vector2} vec2
   */
-  setOrigin(x, y) {
-    this.origin = new Vector2(x, y);
-    var test = this.findClosestNode(this.origin.x, this.origin.y);
-    console.log("node", test);
+  setOrigin(vec2) {
+    this.origin = vec2;
+    var test = this.findClosestNode(vec2);
   }
 
   /**
@@ -64,19 +62,18 @@ class Navigation {
   * @this {Navigation}
   * @return {Vector2}
   */
-  getOrigin(x, y) {
-    return this.origin;
+  getOrigin() {
+    return this.origin.clone();
   }
 
   /**
   * Sets the destination coordinate of a route
   *
   * @this {Navigation}
-  * @param {number} x X coordinate
-  * @param {number} y Y coordinate
+  * @param {Vector2} vec2
   */
-  setDestination(x, y) {
-    this.destination = new Vector2(x, y);
+  setDestination(vec2) {
+    this.destination = vec2;
   }
 
   /**
@@ -85,8 +82,8 @@ class Navigation {
   * @this {Navigation}
   * @return {Vector2}
   */
-  getDestination(x, y) {
-    return this.destination;
+  getDestination() {
+    return this.destination.clone();
   }
 
   /**
@@ -102,8 +99,8 @@ class Navigation {
       return;
     }
 
-    var start = this.findClosestNode(this.origin.x, this.origin.y);
-    var end = this.findClosestNode(this.destination.x, this.destination.y);
+    var start = this.findClosestNode(this.origin);
+    var end = this.findClosestNode(this.destination);
 
     if(start === null) {
       call("Could not locate origin node", null);
@@ -114,7 +111,7 @@ class Navigation {
       var astar = new AStarPathfinder(this.db);
       var path = astar.findShortestPath(start, end);
       var route = new Route(this.db, this.getOrigin(), path, this.getDestination());
-      console.log("features", this.findInRoute(0.001, route));
+      console.log("features", this.findInRoute(0.01, route));
       call(null, route);
     }
   }
@@ -123,12 +120,11 @@ class Navigation {
   * Finds the closest point in the navmesh relative to the input coordinates
   *
   * @this {Navigation}
-  * @param {number} x X coordinate
-  * @param {number} y Y coordinate
-  * @return {array} [x, y] coordinate
+  * @param {Vector2} vec2
+  * @return {Vertice}
   */
-  findClosestNode(x, y) {
-    return this.db.findClosestNode(x, y);
+  findClosestNode(vec2) {
+    return this.db.findClosestNode(vec2);
   }
 
   /**

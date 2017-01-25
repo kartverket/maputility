@@ -15,7 +15,7 @@ class MapFeature extends Point {
   render(id) {
     return {
       id: id,
-      coordinates: [this.x, this.y],
+      coordinates: this.position.toArray(),
       type: "point",
       title: this.name,
       subtitle: this.type,

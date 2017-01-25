@@ -49,8 +49,8 @@ class Polygon extends Geometry {
     cx += (x0 + x1) * a;
     cy += (y0 + y1) * a;
 
-    this.x = cx / (3 * signedArea);
-    this.y = cy / (3 * signedArea);
+    this.setX(cx / (3 * signedArea));
+    this.setY(cy / (3 * signedArea));
   }
 
   calculateRadius() {
@@ -62,17 +62,17 @@ class Polygon extends Geometry {
       x = arr[i][0];
       y = arr[i][1];
 
-      dx = this.x - x;
-      dy = this.y - y;
+      dx = this.getX() - x;
+      dy = this.getY() - y;
 
       len = Math.sqrt((dx * dx) + (dy * dy));
       this.radius = Math.max(this.radius, len);
     }
   }
 
-  isPointInside(x, y) {
-
+  isPointInside(vec2) {
     var inside = false, i = 0, j = 0, arr = this.points;
+    var x = vec2.x, y = vec2.y;
 
     for(j = arr.length - 1; i < arr.length; j = i++) {
       var xi = arr[i][0], yi = arr[i][1];

@@ -48,7 +48,7 @@ class MapFeatures {
     for(; i < waypoints.length; i++) {
       p0 = p1;
       p1 = waypoints[i];
-      result.push(this.cache.findInLine(radius, p0.x, p0.y, p1.x, p1.y));
+      result.push(this.cache.findInLine(radius, p0, p1));
     }
     return result;
   }

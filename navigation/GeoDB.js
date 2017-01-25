@@ -129,19 +129,18 @@ class GeoDB {
 
   getCoordinateFromId(id) {
     var e = this.cache.getElementById(id);
-    return new Vector2(e.x, e.y);
+    return e.position.clone();
   }
 
   /**
   * Finds the closest vertice to the input coordinates
   *
   * @this {GeoDB}
-  * @param {number} x X Coordinate
-  * @param {number} x Y Coordinate
+  * @param {Vector2} vec2 Coordinate
   * @return {Vertice} Closest vertice, null if not found
   */
-  findClosestNode(x, y) {
-    return this.cache.findClosest(x, y);
+  findClosestNode(vec2) {
+    return this.cache.findClosest(vec2);
   }
 
 }
