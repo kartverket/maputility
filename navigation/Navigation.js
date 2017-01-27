@@ -4,6 +4,7 @@ import AStarPathfinder from "./AStarPathfinder";
 import RouteRenderer from "./RouteRenderer";
 import Vector2 from "../vector/Vector2";
 import Route from "./Route";
+import RouteSegment from "./RouteSegment";
 "use strict";
 
 /**
@@ -29,8 +30,7 @@ class Navigation {
     this.features = new MapFeatures();
     this.db.load();
     this.features.load();
-    this.origin = null;
-    this.destination = null;
+    this.waypoints = [];
     this.route = null;
   }
 
@@ -40,50 +40,61 @@ class Navigation {
   * @this {Navigation}
   */
   clear() {
-    this.origin = null;
-    this.destination = null;
     this.route = null;
+    this.waypoints = [];
   }
 
   /**
-  * Sets the origin coordinate of a route
+  * Sets a waypoint to use when generating a route
   *
   * @this {Navigation}
   * @param {Vector2} vec2
+  * @return {number} index
   */
-  setOrigin(vec2) {
-    this.origin = vec2;
-    var test = this.findClosestNode(vec2);
+  addWaypoint(vec2) {
+    this.waypoints.push(vec2);
+    return this.waypoints.length - 1;
   }
 
   /**
-  * Gets the origin coordinates
+  * Removes a waypoint
   *
   * @this {Navigation}
+  * @param {number} index
+  */
+  removeWaypoint(index) {
+    this.waypoints.splice(index, 1);
+  }
+
+  /**
+  * Get a waypoint
+  *
+  * @this {Navigation}
+  * @param {number}
   * @return {Vector2}
   */
-  getOrigin() {
-    return this.origin.clone();
+  getWaypoint(index) {
+    return this.waypoints[index];
   }
 
   /**
-  * Sets the destination coordinate of a route
+  * Get the waypoints used for navigation
   *
   * @this {Navigation}
-  * @param {Vector2} vec2
+  * @return {array} Array of Vector2 coordinates
   */
-  setDestination(vec2) {
-    this.destination = vec2;
+  getWaypoints() {
+    return this.waypoints;
   }
 
   /**
-  * Gets the destination coordinates
+  * Set the waypoints to use when generating a route
   *
   * @this {Navigation}
-  * @return {Vector2}
+  * @param {array} arr Array of Vector2 coordinates
   */
-  getDestination() {
-    return this.destination.clone();
+  setWaypoints(arr) {
+    this.waypoints = arr;
   }
 
   /**
@@ -94,25 +105,50 @@ class Navigation {
   */
   calculate(call) {
 
-    if(this.origin === null || this.destination === null) {
-      call("Destination or Origin not set!", null);
+    if(this.waypoints.length < 2) {
+      call("Need atleast two waypoints to calculate a route!", null);
       return;
     }
 
-    var start = this.findClosestNode(this.origin);
-    var end = this.findClosestNode(this.destination);
+    var route = new Route(), routeSegment = null;
+
+    for(var i = 1; i < this.waypoints.length; i++) {
+      routeSegment = this.calculateRouteSegment(this.waypoints[i - 1], this.waypoints[i]);
+      if(routeSegment === null) {
+        call("Could not calculate sub-route between waypoint " + i + " to " + (i + 1), null);
+        return;
+      }
+      route.add(routeSegment);
+    }
+
+    call(null, route);
+  }
+
+  /**
+  * Calculate a route between two coordinates
+  *
+  * @this {Navigation}
+  * @param {Vector2} from
+  * @param {Vector2} to
+  * @return {RouteSegment}
+  */
+  calculateRouteSegment(a, b) {
+
+    var start = this.findClosestNode(a);
+    var end = this.findClosestNode(b);
 
     if(start === null) {
-      call("Could not locate origin node", null);
+      console.log("Could not locate origin node");
+      return null;
     } else if(end === null) {
       console.log("could not locate destination");
-      call("Could not locate end node", null);
+      return null;
     } else {
       var astar = new AStarPathfinder(this.db);
       var path = astar.findShortestPath(start, end);
-      var route = new Route(this.db, this.getOrigin(), path, this.getDestination());
+      var route = new RouteSegment(this.db, a, path, b);
       console.log("features", this.findInRoute(0.01, route));
-      call(null, route);
+      return route;
     }
   }
 

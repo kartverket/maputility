@@ -14,6 +14,7 @@ class RouteRenderer {
   *
   * @constructor
   * @this {RouteRenderer}
+  * @param {GeoDB} db
   */
   constructor(db) {
     this.db = db;
@@ -58,14 +59,14 @@ class RouteRenderer {
   * @this {RouteRenderer}
   * @param {number} route The generated route from navigation
   */
-  render(waypoints) {
+  render(id, waypoints) {
     var route = [];
     for(var i = 0; i < waypoints.length; i++) {
       route.push(waypoints[i].toArray());
     }
-    
+
     return {
-      id: "route",
+      id: id,
       type: "polyline",
       coordinates: route,
       alpha: this.alpha,
