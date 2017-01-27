@@ -103,7 +103,8 @@ class RouteSegment {
   * @return {object}
   */
   render(id) {
-    return this.renderer.render(id, this.waypoints);
+    var bezier = this.getBezierCurve(this.abstractSegment());
+    return this.renderer.render(id, bezier);
   }
 
   /**
@@ -249,6 +250,96 @@ class RouteSegment {
     ab.mulScalar(t, ab);
     ab.add(a, ab);
     return ab;
+  }
+
+  /**
+  * Abstract the route segment into fewer coordinates
+  *
+  * @this {RouteSegment}
+  * @return {array} Array of Vector2 coordinates for use in bezier calculation [point, control, point, control, point ...]
+  */
+  abstractSegment() { // TODO
+    var i = 1, len = this.waypoints.length, result = [];
+    var pDelta = new Vector2(0, 0), cDelta = new Vector2(0, 0), p0 = null, p1 = this.waypoints[0];
+    var cTheta = 0, pTheta = 0, cThetaSign = 0, pThetaSign = 0;
+    var threshold = 0.1;
+    var buffer = [];
+    var cPoint = this.waypoints[0];
+
+    this.waypoints[1].sub(this.waypoints[0], pDelta);
+    pDelta.normalize();
+    result.push(this.waypoints[0]);
+
+    for(; i < len; i++) {
+      p0 = p1;
+      p1 = this.waypoints[i];
+
+      p1.sub(p0, cDelta);
+      cDelta.normalize();
+      pTheta = cTheta;
+      cTheta = cDelta.dot(pDelta);
+      pThetaSign = cThetaSign;
+      cThetaSign = Math.sign(pTheta - cTheta)
+
+      console.log(pTheta, cTheta);
+      if(pThetaSign !== cThetaSign && buffer.length !== 0) {
+        let cx = 0, cy = 0, j = 0;
+
+        for(; j < buffer.length; j++) {
+          cx += buffer[j].x;
+          cy += buffer[j].y;
+        }
+
+        cx /= buffer.length;
+        cy /= buffer.length;
+
+        buffer = [];
+        result.push(cPoint);
+        result.push(new Vector2(cx, cy));
+        cPoint = p1;
+      } else {
+        buffer.push(p1);
+      }
+    }
+
+    if(buffer.length !== 0) {
+
+    }
+
+    console.log(buffer, result);
+
+    return result;
+  }
+
+  /**
+  * Calculate the bezier curve for this route segment
+  *
+  * @this {RouteSegment}
+  * @return {array} Array of Vector2 coordinates
+  */
+  getBezierCurve(arr) {
+    var result = [], len = arr.length, i = 2, j = 0, t = 0, t2 = 0, tn = 0;
+    var a, b, c;
+    var one = new Vector2();
+    var two = new Vector2();
+    var three = new Vector2();
+    var resolution = 5;
+
+    for(; i < len; i += 2) {
+      a = arr[i - 2];
+      b = arr[i - 1];
+      c = arr[i];
+      for(j = 0; j < resolution; j++) {
+        t = j / resolution;
+        tn = (1 - t);
+        a.mulScalar(tn * tn, one);
+        b.mulScalar(2 * tn * t, two);
+        c.mulScalar(t * t, three);
+        result.push(new Vector2(one.x + two.x + three.x, one.y + two.y + three.y));
+      }
+    }
+
+    return result;
   }
 
 }
