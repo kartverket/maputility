@@ -23,7 +23,7 @@ gArea.load();
 console.log("Calculating initial clearance data");
 merge.calculateClearance();
 console.log("Performing initial line merge operation");
-merge.mergeLines();
+//merge.mergeLines(); // TODO
 console.log("Performing point merge operation");
 merge.mergePoints();
 console.log("Verified " + merge.verify() + " nodes");

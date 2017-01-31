@@ -44,7 +44,6 @@ class Merge {
 
   // Create new points at intersecting lines
   mergeLines() {
-    console.log("Points", this.path.coordinates.length);
     var lines = this.path.lines, i = 0, j = 0;
     var len = lines.length, l0, l1;
 
@@ -159,7 +158,7 @@ class Merge {
 
   mergePointLine(idx, p, l) {
 
-    var intersect = this.checkPointLineIntersection(p, l);
+    var intersect = this.checkPointLineIntersection(idx, p, l);
     if(intersect === null) {
       return
     }
@@ -175,7 +174,7 @@ class Merge {
     }
   }
 
-  checkPointLineIntersection(p, l) {
+  checkPointLineIntersection(idx, p, l) {
     var l0 = l[0], l1 = l[1];
     var d = new Vector2(0, 0);
     l1.sub(l0, d);
@@ -183,24 +182,24 @@ class Merge {
     var b = d.length();
 
     if(b === 0) {
-      return this.verifyPointLineDistance(p, l0);
+      return this.verifyPointLineDistance(idx, p, l0);
     }
 
     var d = Math.abs(a) / b;
     var t = ((p.x - l0.x) * d.x + (p.y - l0.y) * d.y) / b;
 
     if(t < 0) {
-      return this.verifyPointLineDistance(p, l0);
-    } else if( t > 1) {
-      return this.verifyPointLineDistance(p, l1);
+      return this.verifyPointLineDistance(idx, p, l0);
+    } else if(t > 1) {
+      return this.verifyPointLineDistance(idx, p, l1);
     }
 
-    return this.verifyPointLineDistance(p, new Vector2(l1.x + t * d.x, l1.y + t * d.y));
+    return this.verifyPointLineDistance(idx, p, new Vector2(l1.x + t * d.x, l1.y + t * d.y));
   }
 
-  verifyPointLineDistance(a, b) {
+  verifyPointLineDistance(idx, a, b) {
     var len = a.distance(b);
-    return len < 0.0001 ? [b, len] : null;
+    return (len < 0.0001 || len <= this.clearance[idx]) ? [b, len] : null;
   }
 
   mergeTwoPoints(i, j) {
