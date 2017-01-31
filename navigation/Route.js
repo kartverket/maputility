@@ -75,6 +75,11 @@ class Route {
       result.push(this.segments[i].render("main_"+i));
     }
 
+    for(i = 0; i < this.length(); i++) {
+      result.push(this.segments[i].debug("debug_"+i));
+    }
+
+
     return result;
   }
 }

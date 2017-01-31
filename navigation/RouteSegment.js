@@ -27,6 +27,10 @@ class RouteSegment {
     this.end = end;
     this.pointer = 0;
     this.renderer = new RouteRenderer();
+    this.renderer.setWidth(15);
+    this.renderer.setColor("blue");
+    this.debugRenderer = new RouteRenderer();
+    this.debugRenderer.setWidth(5);
     this.update();
   }
 
@@ -36,14 +40,12 @@ class RouteSegment {
   * @this {RouteSegment}
   */
   update() {
-    this.waypoints = this.interpolate(
+    this.waypoints =
       this.completeRoute(
         this.start,
         this.path,
         this.end
-      ),
-      this.path
-    );
+      );
   }
 
   /**
@@ -103,8 +105,13 @@ class RouteSegment {
   * @return {object}
   */
   render(id) {
-    var bezier = this.getBezierCurve(this.abstractSegment());
-    return this.renderer.render(id, bezier);
+
+    if(this.waypoints.length < 2) {
+      return this.renderer.render(id, this.waypoints);
+    }
+
+    var cardinal = this.cardinalSplineInterpolation(this.abstractSegment());
+    return this.renderer.render(id, cardinal);
   }
 
   /**
@@ -116,6 +123,13 @@ class RouteSegment {
   */
   subrender(start, end) {
     return this.renderer.render(this.subroute(start, end));
+  }
+
+  /**
+  * Render the raw route
+  */
+  debug(id) {
+    return this.debugRenderer.render(id, this.waypoints);
   }
 
   /**
@@ -178,51 +192,6 @@ class RouteSegment {
   }
 
   /**
-  * Interpolates the route
-  *
-  * @this {Route}
-  * @param {Vector2} start
-  * @param {array} route
-  * @param {Vector2} end
-  */
-  interpolate(route) {
-    var len = route.length - 2;
-    var result = [route[0]];
-    var dba = new Vector2(0, 0);
-    var dbc = new Vector2(0, 0);
-    var a = null, b = null, c = null, n = null;
-    var l0 = 0, l1 = this.db.getEdgeClearance(this.path[0], this.path[1]);
-    var theta = 0;
-
-    for(var i = 1; i < len; i++) {
-      a = route[i];
-      b = route[i + 1];
-      c = route[i + 2];
-
-      l0 = l1;
-      l1 = i > 0 ? this.db.getEdgeClearance(this.path[i + 1], this.path[i + 2]) : 0;
-
-      a.sub(b, dba);
-      c.sub(b, dbc);
-      dba.normalize();
-      dbc.normalize();
-
-      n = new Vector2(0, 0);
-      dba.add(dbc, n);
-      n.normalize();
-
-      theta = (1 + dba.dot(dbc)) / 2;
-      n.mulScalar(Math.min(l0, l1) * theta, n);
-      n.add(b, n);
-
-      result.push(n);
-    }
-
-    result.push(route[route.length - 1]);
-    return result;
-  }
-
-  /**
   * Locate the closest point in the line ab to the point p
   *
   * @this {RouteSegment}
@@ -258,17 +227,14 @@ class RouteSegment {
   * @this {RouteSegment}
   * @return {array} Array of Vector2 coordinates for use in bezier calculation [point, control, point, control, point ...]
   */
-  abstractSegment() { // TODO
+  abstractSegment() {
     var i = 1, len = this.waypoints.length, result = [];
     var pDelta = new Vector2(0, 0), cDelta = new Vector2(0, 0), p0 = null, p1 = this.waypoints[0];
     var cTheta = 0, pTheta = 0, cThetaSign = 0, pThetaSign = 0;
-    var threshold = 0.1;
-    var buffer = [];
-    var cPoint = this.waypoints[0];
+    var buffer = [this.waypoints[0]];
 
     this.waypoints[1].sub(this.waypoints[0], pDelta);
     pDelta.normalize();
-    result.push(this.waypoints[0]);
 
     for(; i < len; i++) {
       p0 = p1;
@@ -276,69 +242,107 @@ class RouteSegment {
 
       p1.sub(p0, cDelta);
       cDelta.normalize();
+
       pTheta = cTheta;
       cTheta = cDelta.dot(pDelta);
+
       pThetaSign = cThetaSign;
-      cThetaSign = Math.sign(pTheta - cTheta)
+      cThetaSign = Math.sign(pTheta - cTheta);
 
-      console.log(pTheta, cTheta);
-      if(pThetaSign !== cThetaSign && buffer.length !== 0) {
-        let cx = 0, cy = 0, j = 0;
-
-        for(; j < buffer.length; j++) {
-          cx += buffer[j].x;
-          cy += buffer[j].y;
-        }
-
-        cx /= buffer.length;
-        cy /= buffer.length;
-
-        buffer = [];
-        result.push(cPoint);
-        result.push(new Vector2(cx, cy));
-        cPoint = p1;
+      if(pThetaSign !== cThetaSign && buffer.length > 2) {
+        buffer = this.calculateControlPoints(buffer, result);
       } else {
         buffer.push(p1);
       }
     }
 
-    if(buffer.length !== 0) {
-
+    if(buffer.length > 2) {
+      this.calculateControlPoints(buffer, result);
+    } else if(buffer.length !== 0) {
+      result = result.concat(buffer);
     }
-
-    console.log(buffer, result);
 
     return result;
   }
 
   /**
-  * Calculate the bezier curve for this route segment
+  * Calculate the points where to place the bezier points
   *
   * @this {RouteSegment}
-  * @return {array} Array of Vector2 coordinates
+  * @param {array} buffer
+  * @param {array} result
   */
-  getBezierCurve(arr) {
-    var result = [], len = arr.length, i = 2, j = 0, t = 0, t2 = 0, tn = 0;
-    var a, b, c;
-    var one = new Vector2();
-    var two = new Vector2();
-    var three = new Vector2();
-    var resolution = 5;
+  calculateControlPoints(buffer, result) {
+    let cx = 0, cy = 0, j = 1, len = buffer.length - 1;
+    let a = buffer[0], b = null, c = buffer[len];
+    let mDist = 0, cDist = 0;
 
-    for(; i < len; i += 2) {
-      a = arr[i - 2];
-      b = arr[i - 1];
-      c = arr[i];
-      for(j = 0; j < resolution; j++) {
-        t = j / resolution;
-        tn = (1 - t);
-        a.mulScalar(tn * tn, one);
-        b.mulScalar(2 * tn * t, two);
-        c.mulScalar(t * t, three);
-        result.push(new Vector2(one.x + two.x + three.x, one.y + two.y + three.y));
+    for(; j < len; j++) {
+      cDist = buffer[j].distanceFromLine(a, c);
+      if(cDist > mDist) {
+        mDist = cDist;
+        b = buffer[j];
       }
     }
 
+    result.push(a);
+    result.push(b);
+    return [c];
+  }
+
+  /**
+  * Perform cardinaal spline interpolation of the abstracted route
+  *
+  * @this {RouteSegment}
+  * @param {array} arr Array of Vector2 coordinates
+  * @param {array} Array of Vector2 coordinates
+  */
+  cardinalSplineInterpolation(arr) {
+    var len = arr.length - 2, i = 1, t = 0;
+    var resolution = 5, tension = 0.2;
+    var t1 = new Vector2(0, 0);
+    var t2 = new Vector2(0, 0);
+    var st = 0, st2 = 0, st3 = 0;
+    var c1 = 0, c2 = 0, c3 = 0, c4 = 0;
+    var c1r = [], c2r = [], c3r = [], c4r = [];
+    var result = [arr[0]];
+
+    for(t = 0; t <= resolution; t++) {
+      st = t / resolution;
+      st2 = st * st;
+      st3 = st2 * st;
+      c1r.push((2 * st3) - (3 * st2) + 1)
+      c2r.push((-2 * st3) + (3 * st2))
+      c3r.push(st3 - (2 * st2) + st);
+      c4r.push(st3 - st2);
+    }
+
+    for(; i < len; i++) {
+      t1.set(
+        (arr[i + 1].x - arr[i - 1].x) * tension,
+        (arr[i + 1].y - arr[i - 1].y) * tension
+      );
+      t2.set(
+        (arr[i + 2].x - arr[i].x) * tension,
+        (arr[i + 2].y - arr[i].y) * tension
+      );
+
+      for(t = 0; t <= resolution; t++) {
+        c1 = c1r[t];
+        c2 = c2r[t];
+        c3 = c3r[t];
+        c4 = c4r[t];
+
+        result.push(
+          new Vector2(
+            (c1 * arr[i].x) + (c2 * arr[i+1].x) + (c3 * t1.x) + (c4 * t2.x),
+            (c1 * arr[i].y) + (c2 * arr[i+1].y) + (c3 * t1.y) + (c4 * t2.y)
+          )
+        );
+      }
+    }
+
+    result.push(arr[arr.length - 1]);
     return result;
   }
 
