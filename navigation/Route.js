@@ -17,7 +17,7 @@ class Route {
   */
   constructor() {
     this.renderer = new RouteRenderer();
-    this.renderer.setWidth(15);
+    this.renderer.setWidth(10);
     this.renderer.setAlpha(0.5);
     this.segments = [];
   }
