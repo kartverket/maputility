@@ -34,6 +34,9 @@ class Merge {
       min = dist < min ? dist : min;
     }
 
+    if(min > 10) {
+      console.log("what the shit");
+    }
     return +min.toFixed(8);
   }
 
@@ -204,13 +207,11 @@ class Merge {
 
   mergeTwoPoints(i, j) {
     var p0 = this.path.coordinates[i], p1 = this.path.coordinates[j];
-    var d = new Vector2(0, 0);
-    p1.sub(p0, d);
-    var len = d.length();
+    var dist = p0.distance(p1);
     var adj = this.path.adjacents;
     var offset = this.clearance[i] + this.clearance[j];
 
-    if(len <= 0.0005 || len <= offset) {
+    if(dist <= 0.0005 || dist <= offset * 1.25) {
       if(adj[i].indexOf(j) === -1) {
         adj[i].push(j);
       }
@@ -219,6 +220,77 @@ class Merge {
         adj[j].push(i);
       }
     }
+  }
+
+  npointscheck() {
+    var index = this.path.coordinates, adjacents = this.path.adjacents;
+    var len = index.length;
+    var adj = null, point = null;
+    var i = 0, j = 0;
+
+    var counter = 0;
+
+    for(; i < len; i++) {
+      adj = adjacents[i];
+      for(j = 0; j < adj.length; j++) {
+        if(this.checkAdjacent(i, adj[j])) {
+          len = index.length;
+          console.log("Added 1 new point at", i);
+        }
+      }
+    }
+  }
+
+  checkAdjacent(i, j) {
+    var p0 = this.path.coordinates[i];
+    var p1 = this.path.coordinates[j];
+    var dist = p0.distance(p1);
+
+    if(dist < 0.1) {
+      return false;
+    }
+
+    var index = this.path.coordinates;
+    var adjacents = this.path.adjacents;
+    var d = new Vector2(0, 0);
+    p1.sub(p0, d);
+    var pn = new Vector2(p0.x + d.x / 2 , p0.x + d.y / 2);
+
+    var clearance = this.minimumClearance(pn);
+    var adj = [];
+
+    for(var t = 0; t < index.length; t++) {
+      if(t !== i && t !== j && this.checknpoint(clearance, pn, t)) {
+        adj.push(t);
+      }
+    }
+
+    if(adj.length !== 0) {
+      var nIndex = index.length;
+      adjacents[i].splice(adjacents[i].indexOf(j), 1);
+      adjacents[j].splice(adjacents[j].indexOf(i), 1);
+      adjacents[i].push(nIndex);
+      adjacents[j].push(nIndex);
+      this.clearance.push(clearance);
+      adjacents.push(adj);
+      index.push(pn);
+
+      for(var t = 0; t < adj.length; t++) {
+        adjacents[adj[t]].push(nIndex);
+      }
+
+      return true;
+    }
+
+    return false;
+  }
+
+  checknpoint(clearance, p0, t) {
+    var p1 = this.path.coordinates[t];
+    var distance = p0.distance(p1);
+    var offset = 1.25 * (clearance + this.clearance[t]);
+    console.log(offset);
+    return distance < 10 && offset > distance;
   }
 
   verify() {

@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "test": "jest",
-    "g2d": "babel-node tools/g2d/index.js data/input_graph.json data/input_area.json",
+    "g2d": "babel-node --max_old_space_size=8182 tools/g2d/index.js data/input_graph.json data/input_area.json",
     "idx": "babel-node tools/indexfeatures.js data/bunkring.json",
     "mkdocs": "jsdoc --configure .jsdoc.json --verbose",
     "test": "mocha --compilers js:babel-register"

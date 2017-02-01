@@ -1,3 +1,4 @@
+import RouteRenderer from "./RouteRenderer";
 "use strict";
 
 /**
@@ -15,6 +16,9 @@ class Route {
   * @this {Route}
   */
   constructor() {
+    this.renderer = new RouteRenderer();
+    this.renderer.setWidth(15);
+    this.renderer.setAlpha(0.5);
     this.segments = [];
   }
 
@@ -24,8 +28,24 @@ class Route {
   * @this {Route}
   * @param {RouteSegment}
   */
-  add(segment) {
+  push(segment) {
     this.segments.push(segment);
+  }
+
+  set(index, segment) {
+    this.segments[index] = segment;
+  }
+
+  pop() {
+    return this.segments.pop();
+  }
+
+  remove(index) {
+    return this.segments.splice(index, 1);
+  }
+
+  clear() {
+    this.segments = [];
   }
 
   /**
@@ -70,17 +90,40 @@ class Route {
   * @return {array} Array of mapbox annotations representing this route
   */
   render() {
-    var result = [], i = 0;
-    for(; i < this.length(); i++) {
-      result.push(this.segments[i].render("main_"+i));
+    var i = 0, j = 0, arr = null, result = [];
+
+    for(var i = 0; i < this.segments.length; i++) {
+      arr = this.segments[i].render();
+      for(j = 0; j < arr.length; j++) {
+        result.push(arr[j].toArray());
+      }
     }
 
-    for(i = 0; i < this.length(); i++) {
-      result.push(this.segments[i].debug("debug_"+i));
+    return this.renderer.render("route", result);
+  }
+
+  /**
+  * Check if this route object has anything to render
+  *
+  * @this {Route}
+  * @return {boolean}
+  */
+  isEmpty() {
+    return this.segments.length === 0;
+  }
+
+  /**
+  * Clones this route instance
+  *
+  * @this {Route}
+  * @return {Route}
+  */
+  clone() {
+    var r = new Route();
+    for(var i = 0; i < this.segments.length; i++) {
+      r.push(this.segments[i].clone());
     }
-
-
-    return result;
+    return r;
   }
 }
 

@@ -31,7 +31,7 @@ class Navigation {
     this.db.load();
     this.features.load();
     this.waypoints = [];
-    this.route = null;
+    this.route = new Route();
   }
 
   /**
@@ -40,7 +40,7 @@ class Navigation {
   * @this {Navigation}
   */
   clear() {
-    this.route = null;
+    this.route.clear();
     this.waypoints = [];
   }
 
@@ -51,19 +51,48 @@ class Navigation {
   * @param {Vector2} vec2
   * @return {number} index
   */
-  addWaypoint(vec2) {
+  pushWaypoint(vec2) {
+    var len = this.waypoints.length;
     this.waypoints.push(vec2);
-    return this.waypoints.length - 1;
+
+    if(len >= 1) {
+      var segment = this.calculateRouteSegment(this.waypoints[len - 1], vec2);
+      this.route.push(segment);
+    }
+
+    return len;
+  }
+
+  /**
+  * Removes a waypoint from the end of the list and returns it
+  *
+  * @this {Navigation}
+  * @return {Vector2}
+  */
+  popWaypoint() {
+    var wp = this.waypoints.pop();
+    if(this.waypoints.length !== 0) {
+      this.route.pop();
+    }
+    return wp;
   }
 
   /**
   * Removes a waypoint
   *
   * @this {Navigation}
-  * @param {number} index
+  * @param {number} val (Can also be Vector2, will then choose the closest waypoint)
   */
-  removeWaypoint(index) {
+  removeWaypoint(val) {
+    var index = typeof val === "number" ? val : this.findClosestWaypoint(val);
     this.waypoints.splice(index, 1);
+    if(this.waypoints.length > 1) {
+      this.route.remove(index - 1);
+      if(index > 0 && index < this.waypoints.length) {
+        var segment = this.calculateRouteSegment(this.waypoints[index - 1], this.waypoints[index]);
+        this.route.set(index - 1, segment);
+      }
+    }
   }
 
   /**
@@ -95,33 +124,44 @@ class Navigation {
   */
   setWaypoints(arr) {
     this.waypoints = arr;
+    this.calculate();
+  }
+
+  /**
+  * Locate the set waypoint closest to a set of coordinates and return the index
+  *
+  * @this {Navigation}
+  * @param {Vector2} vec2
+  * @return {number}
+  */
+  findClosestWaypoint(vec2) {
+    var min = Number.MAX_VALUE, dist = 0;
+    var curr = -1, len = this.waypoints.length, i = 0;
+
+    for(; i < len; i++) {
+      dist = vec2.distance(this.waypoints[i]);
+      if(dist < min) {
+        min = dist;
+        curr = i;
+      }
+    }
+
+    return curr;
   }
 
   /**
   * Generates a route based on the previously set destination and origin coordinates
   *
   * @this {Navigation}
-  * @param {requestCallback} call Callback, is called with (Error, coordinate[{x, y, index}])
+  * @return {Route}
   */
-  calculate(call) {
-
-    if(this.waypoints.length < 2) {
-      call("Need atleast two waypoints to calculate a route!", null);
-      return;
-    }
-
-    var route = new Route(), routeSegment = null;
-
-    for(var i = 1; i < this.waypoints.length; i++) {
+  calculate() {
+    this.route.clear();
+    var routeSegment = null, i = 1;
+    for(; i < this.waypoints.length; i++) {
       routeSegment = this.calculateRouteSegment(this.waypoints[i - 1], this.waypoints[i]);
-      if(routeSegment === null) {
-        call("Could not calculate sub-route between waypoint " + i + " to " + (i + 1), null);
-        return;
-      }
       route.add(routeSegment);
     }
-
-    call(null, route);
   }
 
   /**
@@ -147,7 +187,7 @@ class Navigation {
       var astar = new AStarPathfinder(this.db);
       var path = astar.findShortestPath(start, end);
       var route = new RouteSegment(this.db, a, path, b);
-      console.log("features", this.findInRoute(0.01, route));
+      //console.log("features", this.findInRoute(0.01, route));
       return route;
     }
   }
@@ -173,6 +213,16 @@ class Navigation {
   */
   findInRoute(radius, route) {
     return this.features.findInRoute(radius, route.waypoints);
+  }
+
+  /**
+  * Returns a route instance
+  *
+  * @this {Navigation}
+  * @return {Route}
+  */
+  getRoute() {
+    return this.route.clone();
   }
 
 }

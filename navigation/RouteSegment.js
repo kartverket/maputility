@@ -1,4 +1,3 @@
-import RouteRenderer from "./RouteRenderer";
 import Vector2 from "../vector/Vector2";
 
 
@@ -26,11 +25,6 @@ class RouteSegment {
     this.waypoints = [];
     this.end = end;
     this.pointer = 0;
-    this.renderer = new RouteRenderer();
-    this.renderer.setWidth(15);
-    this.renderer.setColor("blue");
-    this.debugRenderer = new RouteRenderer();
-    this.debugRenderer.setWidth(5);
     this.update();
   }
 
@@ -106,12 +100,11 @@ class RouteSegment {
   */
   render(id) {
 
-    if(this.waypoints.length < 2) {
-      return this.renderer.render(id, this.waypoints);
+    if(this.waypoints.length < 2000000) {
+      return this.waypoints;
     }
 
-    var cardinal = this.cardinalSplineInterpolation(this.abstractSegment());
-    return this.renderer.render(id, cardinal);
+    return this.cardinalSplineInterpolation(this.abstractSegment());
   }
 
   /**
@@ -210,9 +203,9 @@ class RouteSegment {
     var apab = ap.x*ab.x + ap.y*ab.y;
     var t = apab / ab2;
 
-    if(t < 0) {
+    if(t <= 0) {
       return b;
-    }else if(t > 1) {
+    }else if(t > 1 || isNaN(t)) {
       return a;
     }
 
@@ -228,6 +221,7 @@ class RouteSegment {
   * @return {array} Array of Vector2 coordinates for use in bezier calculation [point, control, point, control, point ...]
   */
   abstractSegment() {
+    console.log(this.waypoints);
     var i = 1, len = this.waypoints.length, result = [];
     var pDelta = new Vector2(0, 0), cDelta = new Vector2(0, 0), p0 = null, p1 = this.waypoints[0];
     var cTheta = 0, pTheta = 0, cThetaSign = 0, pThetaSign = 0;
@@ -299,7 +293,7 @@ class RouteSegment {
   */
   cardinalSplineInterpolation(arr) {
     var len = arr.length - 2, i = 1, t = 0;
-    var resolution = 5, tension = 0.2;
+    var resolution = 5, tension = 0.5;
     var t1 = new Vector2(0, 0);
     var t2 = new Vector2(0, 0);
     var st = 0, st2 = 0, st3 = 0;
@@ -318,6 +312,7 @@ class RouteSegment {
     }
 
     for(; i < len; i++) {
+
       t1.set(
         (arr[i + 1].x - arr[i - 1].x) * tension,
         (arr[i + 1].y - arr[i - 1].y) * tension
@@ -344,6 +339,11 @@ class RouteSegment {
 
     result.push(arr[arr.length - 1]);
     return result;
+  }
+
+
+  clone() {
+    return new RouteSegment(this.db, this.start, this.path, this.end);
   }
 
 }

@@ -60,15 +60,11 @@ class RouteRenderer {
   * @param {number} route The generated route from navigation
   */
   render(id, waypoints) {
-    var route = [];
-    for(var i = 0; i < waypoints.length; i++) {
-      route.push(waypoints[i].toArray());
-    }
 
     return {
       id: id,
       type: "polyline",
-      coordinates: route,
+      coordinates: waypoints,
       alpha: this.alpha,
       strokeColor: this.color,
       strokeWidth: this.width

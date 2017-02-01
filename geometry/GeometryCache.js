@@ -87,8 +87,12 @@ class GeometryCache {
   * @param {Geometry} The closest geometry object in the cache, null if none is found within 2 radius.
   */
   findClosest(vec2) {
-    var result = [], i = 0, delta = Number.MAX_VALUE, curr = null, d = 0, shape;
-    this.tree.findIntersect(5, vec2, result);
+    var result = [], radius = 4, i = 0, delta = Number.MAX_VALUE, curr = null, d = 0, shape;
+
+    while(result.length === 0 && radius < 180) {
+      this.tree.findIntersect(radius, vec2, result);
+      radius = radius * 2;
+    }
 
     for(; i < result.length; i++) {
       shape = result[i];
