@@ -18,7 +18,7 @@ class RouteRenderer {
   */
   constructor(db) {
     this.db = db;
-    this.color = "red";
+    this.color = "#ff0000";
     this.alpha = 0.2;
     this.width = 25;
   }
@@ -67,6 +67,7 @@ class RouteRenderer {
       alpha: this.alpha,
       strokeAlpha: this.alpha,
       strokeColor: this.color,
+      fillColor: this.color,
       color: this.color,
       strokeWidth: this.width
     };
