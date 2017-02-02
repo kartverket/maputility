@@ -164,7 +164,7 @@ class Merge {
     }
 
     var x = +intersect[0].x.toFixed(8), y = +intersect[0].x.toFixed(8), d = intersect[1];
-    var index = d === 0 ? idx : pointExists(x, y);
+    var index = d === 0 ? idx : this.pointExists(x, y);
 
     if(index === -1) {
       var nIndex = this.path.coordinates.length;
@@ -235,7 +235,7 @@ class Merge {
           if(++counter > 4000) {
             counter = 0;
             console.log("Added 4000 new points", len, i);
-            return; // its registering all points as adjacents, why? spam 
+            return; // its registering all points as adjacents, why? spam
           }
         }
       }

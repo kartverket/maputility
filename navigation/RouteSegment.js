@@ -100,11 +100,12 @@ class RouteSegment {
   */
   render(id) {
 
-    if(this.waypoints.length < 2000000) {
+    if(this.waypoints.length < 2) {
       return this.waypoints;
     }
 
-    return this.cardinalSplineInterpolation(this.abstractSegment());
+    return this.cardinalSplineInterpolation(this.waypoints);
+    //return this.cardinalSplineInterpolation(this.abstractSegment());
   }
 
   /**
@@ -278,6 +279,8 @@ class RouteSegment {
         b = buffer[j];
       }
     }
+
+
 
     result.push(a);
     result.push(b);

@@ -32,7 +32,6 @@ class MapFeatures {
   addFeature(type, f) {
     var mf = new MapFeature(type, f);
     this.cache.add(mf);
-    console.log("added feature", mf.name);
   }
 
   /**

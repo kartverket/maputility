@@ -49,33 +49,61 @@ class GeoJSON {
   }
 
   parseLineString(coords) {
-    var coord = null, vec = null, adj = [], index = 0;
+    var coord = null, vec = null, adj = [], index = 0, j = 0, exists = false, p = null;
 
     for(var i = 0; i < coords.length; i++) {
       coord = coords[i];
       vec = new Vector2(+coord[0].toFixed(8), +coord[1].toFixed(8));
-      index = this.coordinates.length;
-      this.coordinates.push(vec);
+      index = this.findIndex(vec);
 
-      var adj = [];
+      if(index === -1) {
+        adj = [];
+        index = this.coordinates.length;
+        this.coordinates.push(vec);
+        this.adjacents.push(adj);
+      }else{
+        adj = this.adjacents[index];
+      }
+
       if(i > 0){
-        adj.push(index - 1);
-      }
-      if(i < coords.length - 1) {
-        adj.push(index + 1);
-      }
-
-      this.adjacents.push(adj);
-
-      if(i > 0) {
+        coord = coords[i - 1];
+        vec = new Vector2(+coord[0].toFixed(8), +coord[1].toFixed(8));
+        let pIndex = this.findIndex(vec);
+        if(adj.indexOf(pIndex) === -1) {
+          adj.push(pIndex);
+        }
         this.lines.push([
-          this.coordinates[i - 1],
-          this.coordinates[i],
-          index - 1,
+          this.coordinates[pIndex],
+          this.coordinates[index],
+          pIndex,
           index
         ]);
       }
+
+      if(i < coords.length - 1) {
+        coord = coords[i + 1];
+        vec = new Vector2(+coord[0].toFixed(8), +coord[1].toFixed(8));
+        let nIndex = this.findIndex(vec);
+        nIndex = nIndex === -1 ? this.coordinates.length : nIndex;
+        if(adj.indexOf(nIndex) === -1) {
+          adj.push(nIndex);
+        }
+      }
     }
+  }
+
+  findIndex(vec) {
+    var p = null, i = 0;
+
+    for(; i < this.coordinates.length; i++) {
+      p = this.coordinates[i];
+      if(p.x === vec.x && p.y === vec.y) {
+      //if(p.distance(vec) < 0.00001 || p.x === vec.x && p.y === vec.y) {
+        return i;
+      }
+    }
+
+    return -1;
   }
 
   parseMultiLineString(data) {

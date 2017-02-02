@@ -186,6 +186,7 @@ class Navigation {
     } else {
       var astar = new AStarPathfinder(this.db);
       var path = astar.findShortestPath(start, end);
+      console.log("PATH", path);
       var route = new RouteSegment(this.db, a, path, b);
       //console.log("features", this.findInRoute(0.01, route));
       return route;
