@@ -34,9 +34,6 @@ class Merge {
       min = dist < min ? dist : min;
     }
 
-    if(min > 10) {
-      console.log("what the shit");
-    }
     return +min.toFixed(8);
   }
 
@@ -234,8 +231,12 @@ class Merge {
       adj = adjacents[i];
       for(j = 0; j < adj.length; j++) {
         if(this.checkAdjacent(i, adj[j])) {
-          len = index.length;
-          console.log("Added 1 new point at", i);
+          //len = index.length;
+          if(++counter > 4000) {
+            counter = 0;
+            console.log("Added 4000 new points", len, i);
+            return; // its registering all points as adjacents, why? spam 
+          }
         }
       }
     }
@@ -246,7 +247,7 @@ class Merge {
     var p1 = this.path.coordinates[j];
     var dist = p0.distance(p1);
 
-    if(dist < 0.1) {
+    if(dist < 0.25) {
       return false;
     }
 
@@ -254,13 +255,13 @@ class Merge {
     var adjacents = this.path.adjacents;
     var d = new Vector2(0, 0);
     p1.sub(p0, d);
-    var pn = new Vector2(p0.x + d.x / 2 , p0.x + d.y / 2);
-
+    var pn = new Vector2(p0.x + d.x / 2 , p0.y + d.y / 2);
     var clearance = this.minimumClearance(pn);
+
     var adj = [];
 
     for(var t = 0; t < index.length; t++) {
-      if(t !== i && t !== j && this.checknpoint(clearance, pn, t)) {
+      if(t !== i && t !== j && this.checknpoint(clearance, pn, t, dist)) {
         adj.push(t);
       }
     }
@@ -285,12 +286,12 @@ class Merge {
     return false;
   }
 
-  checknpoint(clearance, p0, t) {
+  checknpoint(clearance, p0, t, odist) {
     var p1 = this.path.coordinates[t];
     var distance = p0.distance(p1);
     var offset = 1.25 * (clearance + this.clearance[t]);
-    console.log(offset);
-    return distance < 10 && offset > distance;
+
+    return distance < 1 && distance > 0.1 && offset > distance;
   }
 
   verify() {

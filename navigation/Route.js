@@ -125,6 +125,17 @@ class Route {
     }
     return r;
   }
+
+  /**
+  * Get the renderer object representing the route
+  *
+  * @this {Route}
+  * @return {RouteRenderer}
+  */
+  getRenderer() {
+    return this.renderer;
+  }
+
 }
 
 

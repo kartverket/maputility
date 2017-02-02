@@ -26,8 +26,8 @@ merge.calculateClearance();
 //merge.mergeLines(); // TODO
 console.log("Performing point merge operation");
 merge.mergePoints();
-console.log("Performing adjacent merge operation");
-merge.npointscheck();
+//console.log("Performing adjacent merge operation");
+//merge.npointscheck(); // TODO
 console.log("Verified " + merge.verify() + " nodes");
 
 

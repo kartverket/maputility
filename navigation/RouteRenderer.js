@@ -60,13 +60,14 @@ class RouteRenderer {
   * @param {number} route The generated route from navigation
   */
   render(id, waypoints) {
-
     return {
       id: id,
       type: "polyline",
       coordinates: waypoints,
       alpha: this.alpha,
+      strokeAlpha: this.alpha,
       strokeColor: this.color,
+      color: this.color,
       strokeWidth: this.width
     };
   }
