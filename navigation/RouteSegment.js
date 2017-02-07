@@ -222,7 +222,6 @@ class RouteSegment {
   * @return {array} Array of Vector2 coordinates for use in bezier calculation [point, control, point, control, point ...]
   */
   abstractSegment() {
-    console.log(this.waypoints);
     var i = 1, len = this.waypoints.length, result = [];
     var pDelta = new Vector2(0, 0), cDelta = new Vector2(0, 0), p0 = null, p1 = this.waypoints[0];
     var cTheta = 0, pTheta = 0, cThetaSign = 0, pThetaSign = 0;
@@ -296,7 +295,7 @@ class RouteSegment {
   */
   cardinalSplineInterpolation(arr) {
     var len = arr.length - 2, i = 1, t = 0;
-    var resolution = 5, tension = 0.5;
+    var resolution = 5, tension = 0.25;
     var t1 = new Vector2(0, 0);
     var t2 = new Vector2(0, 0);
     var st = 0, st2 = 0, st3 = 0;

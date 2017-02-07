@@ -208,7 +208,7 @@ class Merge {
     var adj = this.path.adjacents;
     var offset = this.clearance[i] + this.clearance[j];
 
-    if(dist <= 0.0005 || dist <= offset * 1.25) {
+    if(dist <= 0.0025 || dist <= offset * 1.25) {
       if(adj[i].indexOf(j) === -1) {
         adj[i].push(j);
       }

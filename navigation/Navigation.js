@@ -186,9 +186,7 @@ class Navigation {
     } else {
       var astar = new AStarPathfinder(this.db);
       var path = astar.findShortestPath(start, end);
-      console.log("PATH", path);
       var route = new RouteSegment(this.db, a, path, b);
-      //console.log("features", this.findInRoute(0.01, route));
       return route;
     }
   }
@@ -208,12 +206,12 @@ class Navigation {
   * Find data points along the route
   *
   * @this {Navigation}
-  * @param {Route} route
+  * @param {RouteSegment} routeSegment
   * @param {number} radius Distance from route to search
   * @param {requestCallback} call (err, result)
   */
-  findInRoute(radius, route) {
-    return this.features.findInRoute(radius, route.waypoints);
+  findInRouteSegment(radius, routeSegment) {
+    return this.features.findInRoute(radius, routeSegment.waypoints);
   }
 
   /**
@@ -224,6 +222,16 @@ class Navigation {
   */
   getRoute() {
     return this.route.clone();
+  }
+
+  /**
+  * Gets the mapfeatures object
+  *
+  * @this {Navigation}
+  * @return {MapFeatures}
+  */
+  getFeatures() {
+    return this.features;
   }
 
 }

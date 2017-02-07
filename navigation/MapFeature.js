@@ -1,6 +1,12 @@
 import Point from "../geometry/Point";
 
 
+const ICONS = {
+  "bunkering": "gas",
+  "port": "port",
+  "guestport": "guest"
+};
+
 class MapFeature extends Point {
 
   /**
@@ -8,7 +14,8 @@ class MapFeature extends Point {
   */
   constructor(type, feature) {
     super(feature.c[0], feature.c[1]);
-    this.name = feature.d.Name;
+    this.name = feature.n;
+    this.region = feature.r;
     this.type = type;
   }
 
@@ -19,12 +26,16 @@ class MapFeature extends Point {
       type: "point",
       title: this.name,
       subtitle: this.type,
-      rightCalloutAccessory: {
-        source: { uri: "https://cldup.com/9Lp0EaBw5s.png" },
+      annotationImage: {
+        source: { uri: ICONS[this.type]},
         height: 25,
         width: 25
       }
     };
+  }
+
+  toString() {
+    return this.name + ", " + this.region + " (" + this.getX() + ", " + this.getY() + ")";
   }
 }
 

@@ -28,7 +28,7 @@ var counter = 0;
 for(var i = 0; i < json.length; i++) {
   var collection = json[i];
   console.log("Found feature collection: " +  collection.name);
-  features[collection.name] = parseFeatures(collection.features);
+  features[collection.name] = parseFeatures(collection.name, collection.features);
 }
 
 var output = JSON.stringify(features);
@@ -37,21 +37,39 @@ console.log("Parsed " + counter + " features")
 console.log("Operation complete, writing output!");
 fs.writeFile(path.join(__dirname,"../data","features.json"), output);
 
-function parseFeatures(features) {
+function parseFeatures(type, features) {
   var result = [];
 
   for(var i = 0; i < features.length; i++) {
-    result.push(parseFeature(features[i]));
+    result.push(parseFeature(type, features[i]));
   }
 
   return result;
 }
 
-function parseFeature(f) {
+function parseFeature(type, f) {
   counter++;
+  var data = {};
+  var prop = f.properties;
+
+  switch(type) {
+    case "bunkering":
+    data["fuel"] = prop.DRIVSTOFF;
+    break;
+    case "port":
+    data["uuid"] = prop.uuid;
+    break;
+    case "guestport":
+
+    break;
+  }
+
+  var region = prop.Kommune || prop.kommune;
+
   return {
     c: [f.geometry.coordinates[1], f.geometry.coordinates[0]],
-    d: f.properties,
-    n: f.properties.Name
+    d: data,
+    n: prop.Name || prop.navn,
+    r: region ? region.toLowerCase() : ""
   }
 }
