@@ -45,6 +45,34 @@ class Navigation {
   }
 
   /**
+  * Sets a waypoint and recalculates the route
+  *
+  * @this {Navigation}
+  * @param {number} index
+  * @param {Vector2} vec2
+  */
+  setWaypoint(index, vec2) {
+    let len = this.waypoints.length;
+    if(index === 0 && len !== 0) {
+      this.waypoints[0] = vec2;
+      if(len > 1) {
+        this.route.set(0, this.calculateRouteSegment(this.waypoints[0], this.waypoints[1]));
+      }
+    } else if(index >= len) {
+      this.pushWaypoint(vec2);
+    } else {
+      this.waypoints[index] = vec2;
+      if(index > 0) {
+        this.route.set(index - 1, this.calculateRouteSegment(this.waypoints[index - 1], this.waypoints[index]));
+      }
+      if(index < len - 1) {
+        this.route.set(index, this.calculateRouteSegment(this.waypoints[index], this.waypoints[index + 1]))
+      }
+    }
+
+  }
+
+  /**
   * Sets a waypoint to use when generating a route
   *
   * @this {Navigation}
@@ -86,7 +114,7 @@ class Navigation {
   removeWaypoint(val) {
     var index = typeof val === "number" ? val : this.findClosestWaypoint(val);
     this.waypoints.splice(index, 1);
-    if(this.waypoints.length > 1) {
+    if(this.waypoints.length !== 0) {
       this.route.remove(index - 1);
       if(index > 0 && index < this.waypoints.length) {
         var segment = this.calculateRouteSegment(this.waypoints[index - 1], this.waypoints[index]);

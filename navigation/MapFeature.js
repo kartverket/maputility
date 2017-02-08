@@ -1,5 +1,5 @@
 import Point from "../geometry/Point";
-
+import Waypoint from "../vector/Waypoint";
 
 const ICONS = {
   "bunkering": "gas",
@@ -34,8 +34,12 @@ class MapFeature extends Point {
     };
   }
 
+  makeWaypoint() {
+    return new Waypoint(this.getX(), this.getY(), this.name + ", " + this.region);
+  }
+
   toString() {
-    return this.name + ", " + this.region + " (" + this.getX() + ", " + this.getY() + ")";
+    return this.name + ", " + this.region + " (" + this.getX().toFixed(2) + ", " + this.getY().toFixed(2) + ")";
   }
 }
 

@@ -229,6 +229,15 @@ class Vector2 {
   toArray() {
     return [this.x, this.y];
   }
+
+  /**
+  * Get a string representation of this object
+  *
+  * @return {string}
+  */
+  toString() {
+    return this.x.toFixed(2) + ", " + this.y.toFixed(2);
+  }
 }
 
 export default Vector2;

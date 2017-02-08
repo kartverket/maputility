@@ -5,6 +5,8 @@ import Vector2 from "../vector/Vector2";
 
 /**
 * MapFeatures class
+* Handles feature elements on for rendering and search
+*
 * @author Leif Andreas Rudlang
 * @version 0.0.1
 * @since 0.0.1
@@ -91,14 +93,18 @@ class MapFeatures {
       return;
     }
 
-    if(query[0] === '-' || query[0] >= '0' && query[0] <= '9') {
+    let c = query[0];
+    if(c === '(' || c === '-' || c >= '0' && c <= '9') {
       // Coordinate search
-      let x = 0, y = 0, len = query.length, i = 0, j = 0, c = '';
-      let buffer = [""];
+      let x = 0, y = 0, len = query.length, i = 0, j = 0;
+      let buffer = ["",""];
 
       for(; i < len; i++) {
         c = query[i];
         switch(c) {
+          case '(':
+          case ')':
+          break;
           case ',':
           case ' ':
           j += buffer[j].length !== 0;
@@ -121,14 +127,80 @@ class MapFeatures {
     }
   }
 
+  /**
+  * Performs a text search in the cache
+  *
+  * @this {MapFeatures}
+  * @param {string} query
+  * @param {requestCallback} call(error, result)
+  */
   searchText(query, call) {
-    console.log("searching text", query);
+    let arr = this.cache.elements, result = [], i = 0;
+    let len = arr.length, e = null, val = 0, aQuery = query.split(' ');
+
+    for(; i < len; i++) {
+      e = arr[i];
+      val = this.rankQuery(aQuery, e);
+      if(val !== -1) {
+        result.push({v: val, e: e});
+      }
+    }
+
+    result = result.sort((a,b)=>{
+      return b.v - a.v;
+    })
+
+    call(null, result);
   }
 
+  /**
+  * Ranks the query against a potential result
+  *
+  * @this {MapFeatures}
+  * @param {array} aQuery Query string split into individual words
+  * @param {MapFeature} e Potential result
+  * @return {number} How well the result and the query matches
+  */
+  rankQuery(aQuery, e) {
+    let len = aQuery.length, i = 0, query = "", result = 0;
+    let region = e.region.toLowerCase();
+    let name = e.name.toLowerCase();
+    let kIdx = name.indexOf("havn") !== -1;
+
+    for(; i < len; i++) {
+      query = aQuery[i];
+      let rIdx = region.indexOf(query) !== -1;
+      let nIdx = name.indexOf(query) !== -1;
+
+      if(!rIdx && !nIdx) {
+        return -1;
+      }
+
+      let rOffset = region.length - query.length;
+      let nOffset = name.length - query.length;
+      let offset = Math.sqrt((rOffset * rOffset) + (nOffset * nOffset));
+      offset = Math.max(offset, 0.001);
+      result += (nIdx*2 + rIdx*2 + kIdx*5) / offset;
+    }
+
+    return result / len;
+  }
+
+  /**
+  * Peforms a coordinate search in the cache
+  *
+  * @this {MapFeatures}
+  * @param {Vector2} vec2
+  * @param {requestCallback} call(error, result)
+  */
   searchCoordinates(vec2, call) {
-    console.log("searching coordinates", vec2);
+    let e = this.cache.findClosest(vec2);
+    if(e === null) {
+      call("Error performing coordinate search", null);
+    } else {
+      call(null, [{v: 1, e: e}]);
+    }
   }
-
 
   /**
   * Generate mapbox annotation array
