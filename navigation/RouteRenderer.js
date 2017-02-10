@@ -19,8 +19,8 @@ class RouteRenderer {
   constructor(db) {
     this.db = db;
     this.color = "#ff0000";
-    this.alpha = 0.2;
-    this.width = 25;
+    this.alpha = 1;
+    this.width = 5;
   }
 
   /**
@@ -57,13 +57,20 @@ class RouteRenderer {
   * Takes a generated route and returns a polyline mapbox annotation
   *
   * @this {RouteRenderer}
-  * @param {number} route The generated route from navigation
+  * @param {String} id
+  * @param {array} waypoints The generated route from navigation
+  * @return {object} Mapbox polygline annotation
   */
   render(id, waypoints) {
+    let len = waypoints.length, i = 0, result = [];
+    for(; i < len; i++) {
+      result.push(waypoints[i].toArray());
+    }
+
     return {
       id: id,
       type: "polyline",
-      coordinates: waypoints,
+      coordinates: result,
       alpha: this.alpha,
       strokeAlpha: this.alpha,
       strokeColor: this.color,
@@ -72,6 +79,66 @@ class RouteRenderer {
       strokeWidth: this.width
     };
   }
+
+  /**
+  *
+  * @this {RouteRenderer}
+  * @param {String} id
+  * @param {array} waypoints [Vector2]
+  * @return {object} Mapbox polygon annotation
+  */
+  renderPolygon(id, waypoints) {
+    return {
+      id: id,
+      type: "polygon",
+      coordinates: this.generatePolygon(waypoints),
+      color: this.color,
+      fillColor: this.color,
+      alpha: this.alpha / 4,
+      fillAlpha: this.alpha
+    };
+  }
+
+  /**
+  * Generates a mapbox coordinate array
+  *
+  * @this {RouteRenderer}
+  * @param {array} arr Array of Vector2 Coordinates
+  * @param {array} clearances Width of polygon
+  * @return {array}
+  */
+  generatePolygon(arr, clearances) {
+    let len = arr.length, i = 1,
+    resultLeft = [], resultRight = [],
+    delta = new Vector2(0, 0), perp = new Vector2(0, 0), p2 = new Vector2(0, 0),
+    p0 = null, p1 = arr[0], clearance = 0;
+
+    resultRight.push(p1.toArray());
+
+    for(; i < len; i++) {
+      p0 = p1;
+      p1 = arr[i];
+      if(p0.equals(p1)) {
+        continue;
+      }
+      clearance = 0.0025;//clearances[i - 1]
+      p1.sub(p0, delta);
+      delta.normalize();
+      delta.perpendicular(perp);
+      perp.mulScalar(clearance, perp);
+      p0.add(perp, p2);
+      resultLeft.push(p2.toArray());
+      perp.mulScalar(-1, perp);
+      p0.add(perp, p2);
+      resultRight.push(p2.toArray());
+    }
+
+    resultRight.push(p1.toArray());
+    var result = resultRight.concat(resultLeft.reverse());
+    console.log("RESULT", result);
+    return result;
+  }
+
 }
 
 export default RouteRenderer;

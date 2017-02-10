@@ -17,8 +17,8 @@ class Route {
   */
   constructor() {
     this.renderer = new RouteRenderer();
-    this.renderer.setWidth(10);
-    this.renderer.setAlpha(0.5);
+    this.renderer.setWidth(5);
+    this.renderer.setAlpha(1);
     this.segments = [];
   }
 
@@ -32,18 +32,43 @@ class Route {
     this.segments.push(segment);
   }
 
+  /**
+  * Set a route segment at the input index
+  *
+  * @this {Route}
+  * @param {number} index
+  * @param {RouteSegment}
+  */
   set(index, segment) {
     this.segments[index] = segment;
   }
 
+  /**
+  * Pop a segement from the route and return it
+  *
+  * @this {Route}
+  * @return {RouteSegment}
+  */
   pop() {
     return this.segments.pop();
   }
 
+  /**
+  * Return and remove a route segment from the input index
+  *
+  * @this {Route}
+  * @param {number} index
+  * @return {RouteSegment}
+  */
   remove(index) {
     return this.segments.splice(index, 1);
   }
 
+  /**
+  * Clear route
+  *
+  * @this {Route}
+  */
   clear() {
     this.segments = [];
   }
@@ -90,16 +115,22 @@ class Route {
   * @return {array} Array of mapbox annotations representing this route
   */
   render() {
-    var i = 0, j = 0, arr = null, result = [];
+    var i = 0, j = 0, len = 0, arr = null, result = [];
+
+    if(this.segments.length === 0) {
+      return [this.renderer.render("route_polygon", []), this.renderer.render("route_line", [])];
+    }
 
     for(var i = 0; i < this.segments.length; i++) {
       arr = this.segments[i].render();
-      for(j = 0; j < arr.length; j++) {
-        result.push(arr[j].toArray());
+      len = arr.length - 1;
+      for(j = 0; j < len; j++) {
+        result.push(arr[j]);;
       }
     }
 
-    return this.renderer.render("route", result);
+    result.push(arr[len]);
+    return [this.renderer.renderPolygon("route_polygon", result), this.renderer.render("route_line", result)];
   }
 
   /**

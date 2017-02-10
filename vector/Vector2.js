@@ -63,7 +63,6 @@ class Vector2 {
     destination.y = this.y * vec2.y;
   }
 
-
   /**
   * Multiply this vector and the input scalar and sets the result to the destination vector
   * Destination = this * n
@@ -77,6 +76,29 @@ class Vector2 {
     destination.y = this.y * scalar;
   }
 
+  /**
+  * Divide this vector with the input vector and store the result in the destination vector
+  *
+  * @this {Vector2}
+  * @param {Vector2} vec2
+  * @param {Vector2} destination
+  */
+  div(vec2, destination) {
+    destination.x = this.x / vec2.x;
+    destination.y = this.y / vec2.y;
+  }
+
+  /**
+  * Divide this vector with the input scalar and store the result in the destination vector
+  *
+  * @this {Vector2}
+  * @param {number} scalar
+  * @param {Vector2} destination
+  */
+  divScalar(scalar, destination) {
+    destination.x = this.x / scalar;
+    destination.y = this.y / scalar;
+  }
 
   /**
   * Cross product of this vector and the input, in 2D space this operation returns the Z-Axis
@@ -237,6 +259,17 @@ class Vector2 {
   */
   toString() {
     return this.x.toFixed(2) + ", " + this.y.toFixed(2);
+  }
+
+  /**
+  * Checks if input vector is identical to this vector
+  *
+  * @this {Vector2}
+  * @param {Vector2} vec2
+  * @return {boolean}
+  */
+  equals(vec2) {
+    return this.x === vec2.x && this.y === vec2.y;
   }
 }
 

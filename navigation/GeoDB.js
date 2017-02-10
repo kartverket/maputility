@@ -47,12 +47,15 @@ class GeoDB {
     }
 
     var adjData = data.adjacent;
+    var clearances = data.clearance;
     len = adjData.length;
 
     // Mapping adjacent vertices
     for(i = 0; i < len; i++) {
       e = adjData[i];
-      this.getVerticeById(i).adj = e;
+      v = this.getVerticeById(i);
+      v.adj = adjData[i];
+      v.clr = clearances[i];
     }
 
     this.routeIndex = data.routeIndex;

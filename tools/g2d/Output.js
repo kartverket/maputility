@@ -20,7 +20,7 @@ class Output {
       "index": cdata,
       "adjacent": adjacents,
       "heuristic": [],
-      "clerance": clearance
+      "clearance": clearance
     });
     fs.writeFile(this.path, data);
   }

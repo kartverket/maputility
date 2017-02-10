@@ -279,8 +279,6 @@ class RouteSegment {
       }
     }
 
-
-
     result.push(a);
     result.push(b);
     return [c];
@@ -295,7 +293,7 @@ class RouteSegment {
   */
   cardinalSplineInterpolation(arr) {
     var len = arr.length - 2, i = 1, t = 0;
-    var resolution = 5, tension = 0.25;
+    var resolution = 3, tension = 0.25;
     var t1 = new Vector2(0, 0);
     var t2 = new Vector2(0, 0);
     var st = 0, st2 = 0, st3 = 0;

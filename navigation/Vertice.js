@@ -27,6 +27,7 @@ class Vertice extends Geometry {
     this.gScore = Number.MAX_VALUE;
     this.fScore = Number.MAX_VALUE;
     this.cameFrom = null;
+    this.clr = 0;
   }
 
   /**
