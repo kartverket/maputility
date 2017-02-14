@@ -28,9 +28,9 @@ class LineSegment {
   *
   * @this {LineSegment}
   * @param {LineSegment} l Input line segment to check for intersection with this line
-  * @return {Vector2} Null if no intersection
+  * @return {number} -1 if no intersection, else number between 0 and 1 determining position on segment, replicate intersection position with this.start + this.delta * result
   */
-  checkLineIntersection(l) {
+  intersectsLine(l) {
     let denominator = (l.delta.y * this.delta.x) - (l.delta.x * this.delta.y);
     if(denominator === 0) {
       return null;
@@ -43,11 +43,7 @@ class LineSegment {
     a = numerator1 / denominator;
     b = numerator2 / denominator;
 
-    return (a > 0 && a <= 1) && (b > 0 && b <= 1) ?
-    new Vector2(
-      this.start.x + (a * this.delta.x),
-      this.start.y + (a * this.delta.y)
-    ) : null;
+    return (a > 0 && a <= 1) && (b > 0 && b <= 1) ? a : -1;
   }
 }
 

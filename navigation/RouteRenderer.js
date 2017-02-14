@@ -121,7 +121,7 @@ class RouteRenderer {
       if(p0.equals(p1)) {
         continue;
       }
-      clearance = 0.0025;//clearances[i - 1]
+      clearance = 0.005;//clearances[i - 1]
       p1.sub(p0, delta);
       delta.normalize();
       delta.perpendicular(perp);
