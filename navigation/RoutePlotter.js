@@ -40,7 +40,7 @@ class RoutePlotter {
       call("Need atleast 2 waypoints to plot a route", null);
     } else {
       var len = waypoints.length, routeSegment = null, i = 1;
-      var route = new Route(waypoints[0], waypoints[len - 1]);
+      var route = new Route(waypoints);
       for(; i < len; i++) {
         routeSegment = this.calculateRouteSegment(waypoints[i - 1], waypoints[i]);
         route.push(routeSegment);

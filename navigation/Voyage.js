@@ -1,7 +1,8 @@
 import RoutePlotter from "./RoutePlotter";
 import GeometryCache from "../geometry/GeometryCache";
-import RouteRenderer from "./RouteRenderer";
+import MapFeatures from "./MapFeatures";
 import EventEmitter from "EventEmitter";
+import Segmentation from "./Segmentation";
 import * as Updates from "../constants/Updates";
 "use strict";
 
@@ -11,14 +12,21 @@ import * as Updates from "../constants/Updates";
 * @extends {EventEmitter}
 * @version 0.0.3
 * @since 0.0.3
-* @todo Refactor navigation api, a route is origin->destination, with offsets represented by waypoints in the form of routesegments
 */
 class Voyage extends EventEmitter {
 
+  /**
+  * Create a instance of the Voyage class
+  *
+  * @constructor
+  * @this {Voyage}
+  */
   constructor() {
     super();
     this.plotter = new RoutePlotter();
     this.cache = new GeometryCache();
+    this.features = new MapFeatures();
+    this.features.load();
     this.transactions = [];
     this.waypoints = [];
     this.routes = [];
@@ -32,6 +40,13 @@ class Voyage extends EventEmitter {
     }
   }
 
+  /**
+  * Push a new waypoint to the end of the Voyage
+  *
+  * @this {Voyage}
+  * @param {Vector2} waypoint
+  * @param {requestCallback} call
+  */
   push(waypoint, call) {
     this.waypoints.push(waypoint);
     let len = this.waypoints.length - 1;
@@ -52,6 +67,12 @@ class Voyage extends EventEmitter {
     }
   }
 
+  /**
+  * Remove the last waypoint from the journey
+  *
+  * @this {Voyage}
+  * @param {requestCallback}
+  */
   pop(call) {
     this.waypoints.pop();
     if(this.routes.length !== 0) {
@@ -61,7 +82,16 @@ class Voyage extends EventEmitter {
     call();
   }
 
-  set(index, waypoint) {
+
+  /**
+  * Set the waypoint at the given position
+  *
+  * @this {Voyage}
+  * @param {number} index
+  * @param {Vector2} waypoint
+  * @param {requestCallback} call
+  */
+  set(index, waypoint, call) {
     let len = this.waypoints.length;
     if(index === 0 && len !== 0) {
       this.waypoints[0] = waypoint;
@@ -117,6 +147,13 @@ class Voyage extends EventEmitter {
     }
   }
 
+  /**
+  * Remove the waypoint at the given index
+  *
+  * @this {Voyage}
+  * @param {number} index
+  * @param {requestCallback} call
+  */
   remove(index, call) {
     let wp = this.waypoints.splice(index, 1);
     if(this.waypoints.length !== 0) {
@@ -144,27 +181,129 @@ class Voyage extends EventEmitter {
     }
   }
 
-  segmentRoute(index, waypoint) {
-    
+  /**
+  * Create a segmentation at the specfied position
+  *
+  * @this {Voyage}
+  * @param {Vector2} vec2
+  * @param {requestCallback} call (error, segmentation)
+  */
+  makeSegmentation(vec2, call) {
+
+    if(this.routes.length === 0) {
+      call("You need to specify atleast 2 points before segmenting", null);
+      return;
+    }
+
+    var cwp = this.getClosestPoint(vec2);
+    var route = this.routes[cwp[0]], point = route.path[cwp[1]];
+    var wps = route.waypoints, segments = route.segments;
+    var arr = [], dist = 0, min = Number.MAX_VALUE, segment = 0;
+
+    for(var i = 0; i < route.segments.length; i++) {
+      dist = segments[i].distanceTo(point);
+      if(dist < min) {
+        min = dist;
+        segment = i;
+      }
+    }
+
+    let s = new Segmentation(cwp[0], segment + 1, wps);
+    s.setPosition(point.x, point.y);
+    call(null, s);
   }
 
-  deSegmentRoute() {
-
+  /**
+  * Apply a segmentation
+  *
+  * @this {Voyage}
+  * @param {Segmentation} segmentation
+  * @param {requestCallback} call (error, route)
+  */
+  segment(segmentation, call) {
+    this.plotter.plot(segmentation.waypoints, (err, result)=>{
+      if(!err) {
+        this.routes[segmentation.route] = result;
+      }
+      this.onPlotterUpdate(err, result);
+      call(err, result);
+    });
   }
 
+  /**
+  * Clear route and waypoint data from this instance
+  *
+  * @this {Voyage}
+  */
   clear() {
     this.routes = [];
     this.waypoints = [];
   }
 
+  /**
+  * Get the backing mapfeatures object
+  *
+  * @this {Voyage}
+  * @return {MapFeatures}
+  */
+  getFeatures() {
+    return this.features;
+  }
+
+
+  /**
+  * Get the backing route array
+  *
+  * @this {Voyage}
+  * @return {array}
+  */
   getRoutes() {
     return this.routes;
   }
 
+  /**
+  * Get the backing waypoint array
+  *
+  * @this {Voyage}
+  * @return {array}
+  */
   getWaypoints() {
     return this.waypoints;
   }
 
+  /**
+  * Get the closest point in voyage to input coordinate
+  *
+  * @this {Voyage}
+  * @param {Vector2} vec2
+  * @return {array} [route index, path index]
+  */
+  getClosestPoint(vec2) {
+    let min = Number.MAX_VALUE, len = this.routes.length;
+    let dist = 0, rCurrent = -1, pCurrent = -1, i = 0, j = 0, route = null, path = null;
+
+    for(; i < len; i++) {
+      route = this.routes[i];
+      path = route.path;
+      for(j = 0; j < path.length; j++) {
+        dist = vec2.distance(path[j]);
+        if(dist < min) {
+          min = dist;
+          rCurrent = i;
+          pCurrent = j;
+        }
+      }
+    }
+
+    return [rCurrent, pCurrent];
+  }
+
+  /**
+  * get a array of mapbox annotations
+  *
+  * @this {Voyage}
+  * @return {array}
+  */
   render() {
     let result = [], i = 0, len = this.routes.length;
     for(; i < len; i++) {

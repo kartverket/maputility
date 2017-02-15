@@ -20,6 +20,18 @@ class RouteSegment {
     this.pointer = 0;
   }
 
+  distanceTo(vec2) {
+    var min = Number.MAX_VALUE, dist = 0;
+    for(var i = 0; i < this.path.length; i++) {
+      dist = vec2.distance(this.path[i]);
+      if(dist < min) {
+        min = dist;
+      }
+    }
+
+    return min;
+  }
+
   /**
   * Calculate the total distance of the route
   *

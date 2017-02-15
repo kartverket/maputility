@@ -16,9 +16,8 @@ class Route {
   * @constructor
   * @this {Route}
   */
-  constructor(start, end) {
-    this.start = start;
-    this.end = end;
+  constructor(waypoints) {
+    this.waypoints = waypoints;
     this.segments = [];
     this.path = [];
     this.renderer = new RouteRenderer();
@@ -46,13 +45,15 @@ class Route {
   * @return {array}
   */
   completeRoute(arr) {
-    var result = [this.start];
+    var start = this.waypoints[0];
+    var end = this.waypoints[this.waypoints.length - 1];
+    var result = [start];
     var len = arr.length;
 
     if(arr.length > 2) {
       result.push(
         this.findOptimalIntersection(
-          this.start,
+          start,
           arr[0],
           arr[1]
         )
@@ -66,14 +67,15 @@ class Route {
     if(arr.length > 2) {
       result.push(
         this.findOptimalIntersection(
-          this.end,
+          end,
           arr[len - 2],
           arr[len - 1]
         )
       );
     }
 
-    result.push(this.end);
+    result.push(end);
+    console.log("result", result);
     return this.cardinalSplineInterpolation(result);
   }
 
