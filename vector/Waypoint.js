@@ -1,6 +1,11 @@
 import Vector2 from "./Vector2";
 
-
+/**
+* Class representing a Waypoint
+* @extends {Vector2}
+* @version 0.0.2
+* @since 0.0.2
+*/
 class Waypoint extends Vector2 {
 
   constructor(x, y, data) {

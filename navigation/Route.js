@@ -1,4 +1,5 @@
 import RouteRenderer from "./RouteRenderer";
+import Vector2 from "../vector/Vector2";
 "use strict";
 
 /**
@@ -15,11 +16,152 @@ class Route {
   * @constructor
   * @this {Route}
   */
-  constructor() {
+  constructor(start, end) {
+    this.start = start;
+    this.end = end;
+    this.segments = [];
+    this.path = [];
     this.renderer = new RouteRenderer();
     this.renderer.setWidth(5);
     this.renderer.setAlpha(1);
-    this.segments = [];
+  }
+
+  /**
+  * Updates the path data
+  *
+  * @this {Route}
+  */
+  update() {
+    let arr = [], i = 0, len = this.segments.length;
+    for(; i < len; i++) {
+      arr = arr.concat(this.segments[i].list());
+    }
+    this.path = this.completeRoute(arr);
+  }
+
+  /**
+  * Complete the route
+  *
+  * @this {Route}
+  * @return {array}
+  */
+  completeRoute(arr) {
+    var result = [this.start];
+    var len = arr.length;
+
+    if(arr.length > 2) {
+      result.push(
+        this.findOptimalIntersection(
+          this.start,
+          arr[0],
+          arr[1]
+        )
+      );
+    }
+
+    for(var i = 2; i < len - 2; i++) {
+      result.push(arr[i]);
+    }
+
+    if(arr.length > 2) {
+      result.push(
+        this.findOptimalIntersection(
+          this.end,
+          arr[len - 2],
+          arr[len - 1]
+        )
+      );
+    }
+
+    result.push(this.end);
+    return this.cardinalSplineInterpolation(result);
+  }
+
+  /**
+  * Locate the closest point in the line ab to the point p
+  *
+  * @this {Route}
+  * @param {Vector2} p
+  * @param {Vector2} a
+  * @param {Vector2} b
+  * @return {Vector2}
+  */
+  findOptimalIntersection(p, a, b) {
+    var ab = new Vector2(0,0);
+    var ap = new Vector2(0,0);
+    b.sub(a, ab);
+    p.sub(a, ap);
+
+    var ab2 = ab.x*ab.x + ab.y*ab.y;
+    var apab = ap.x*ab.x + ap.y*ab.y;
+    var t = apab / ab2;
+
+    if(t <= 0) {
+      return b;
+    }else if(t > 1 || isNaN(t)) {
+      return a;
+    }
+
+    ab.mulScalar(t, ab);
+    ab.add(a, ab);
+    return ab;
+  }
+
+  /**
+  * Perform cardinaal spline interpolation of the abstracted route
+  *
+  * @this {Route}
+  * @param {array} arr Array of Vector2 coordinates
+  * @param {array} Array of Vector2 coordinates
+  */
+  cardinalSplineInterpolation(arr) {
+    var len = arr.length - 2, i = 1, t = 0;
+    var resolution = 3, tension = 0.25;
+    var t1 = new Vector2(0, 0);
+    var t2 = new Vector2(0, 0);
+    var st = 0, st2 = 0, st3 = 0;
+    var c1 = 0, c2 = 0, c3 = 0, c4 = 0;
+    var c1r = [], c2r = [], c3r = [], c4r = [];
+    var result = [arr[0]];
+
+    for(t = 0; t <= resolution; t++) {
+      st = t / resolution;
+      st2 = st * st;
+      st3 = st2 * st;
+      c1r.push((2 * st3) - (3 * st2) + 1)
+      c2r.push((-2 * st3) + (3 * st2))
+      c3r.push(st3 - (2 * st2) + st);
+      c4r.push(st3 - st2);
+    }
+
+    for(; i < len; i++) {
+
+      t1.set(
+        (arr[i + 1].x - arr[i - 1].x) * tension,
+        (arr[i + 1].y - arr[i - 1].y) * tension
+      );
+      t2.set(
+        (arr[i + 2].x - arr[i].x) * tension,
+        (arr[i + 2].y - arr[i].y) * tension
+      );
+
+      for(t = 0; t <= resolution; t++) {
+        c1 = c1r[t];
+        c2 = c2r[t];
+        c3 = c3r[t];
+        c4 = c4r[t];
+
+        result.push(
+          new Vector2(
+            (c1 * arr[i].x) + (c2 * arr[i+1].x) + (c3 * t1.x) + (c4 * t2.x),
+            (c1 * arr[i].y) + (c2 * arr[i+1].y) + (c3 * t1.y) + (c4 * t2.y)
+          )
+        );
+      }
+    }
+
+    result.push(arr[arr.length - 1]);
+    return result;
   }
 
   /**
@@ -85,15 +227,15 @@ class Route {
   }
 
   /**
-  * Calculates the total distance of the route in km
+  * Calculate the total distance of the route
   *
   * @this {Route}
-  * @return {number} distance
+  * @return {number} Distance in kilometers
   */
   distance() {
-    var result = 0, i = 0;
-    for(; i < this.length(); i++) {
-      result += this.segments[i].distance();
+    var i = 1, len = this.path.length, result = 0;
+    for(; i < len; i++) {
+      result += this.path[i-1].geographicDistance(this.path[i]);
     }
     return result;
   }
@@ -114,23 +256,11 @@ class Route {
   * @this {Route}
   * @return {array} Array of mapbox annotations representing this route
   */
-  render() {
-    var i = 0, j = 0, len = 0, arr = null, result = [];
-
-    if(this.segments.length === 0) {
-      return [this.renderer.render("route_polygon", []), this.renderer.render("route_line", [])];
-    }
-
-    for(var i = 0; i < this.segments.length; i++) {
-      arr = this.segments[i].render();
-      len = arr.length - 1;
-      for(j = 0; j < len; j++) {
-        result.push(arr[j]);;
-      }
-    }
-
-    result.push(arr[len]);
-    return [this.renderer.renderPolygon("route_polygon", result), this.renderer.render("route_line", result)];
+  render(id) {
+    return [
+      this.renderer.renderPolygon("route_polygon_" + id, this.path),
+      this.renderer.render("route_line_" + id, this.path)
+    ];
   }
 
   /**

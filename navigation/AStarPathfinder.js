@@ -92,10 +92,10 @@ class AStarPathfinder extends Pathfinder {
   * @return {array} {array} Array of route coordinates {x, y, index}
   */
   reconstructPath(start, end) {
-    var path = [end.index], curr = end;
+    var path = [end.position.clone()], curr = end;
     while(curr !== start && curr.cameFrom !== null) {
       curr = curr.cameFrom;
-      path.unshift(curr.index);
+      path.unshift(curr.position.clone());
     }
     this.db.reset();
     return path;

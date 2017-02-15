@@ -1,16 +1,16 @@
 {
   "name": "maputility",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Leif Andreas Rudlang",
   "private": true,
   "scripts": {
-    "test": "jest",
+    "test": "mocha --compilers js:babel-register",
     "g2d": "babel-node --max_old_space_size=8182 tools/g2d/index.js data/input_graph.json data/input_area.json",
     "idx": "babel-node tools/indexfeatures.js",
-    "mkdocs": "jsdoc --configure .jsdoc.json --verbose",
-    "test": "mocha --compilers js:babel-register"
+    "mkdocs": "jsdoc --configure .jsdoc.json --verbose"
   },
   "dependencies": {
+    "EventEmitter": "^1.0.0",
     "priorityqueuejs": "^1.0.0"
   },
   "devDependencies": {

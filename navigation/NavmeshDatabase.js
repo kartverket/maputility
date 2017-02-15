@@ -3,18 +3,18 @@ import Vertice from "./Vertice";
 import Vector2 from "../vector/Vector2";
 
 /**
-* GeoDB, Class to handle nav-mesh data
+* NavmeshDatabase, Class to handle nav-mesh data
 * @author Leif Andreas Rudlang
 * @version 0.0.1
 * @since 0.0.1
 */
-class GeoDB {
+class NavmeshDatabase {
 
   /**
   * Get data from point A to point B
   *
   * @constructor
-  * @this {GeoDB}
+  * @this {NavmeshDatabase}
   */
   constructor() {
     this.cache = new GeometryCache();
@@ -26,7 +26,7 @@ class GeoDB {
   /**
   * Load the mesh into the database
   *
-  * @this {GeoDB}
+  * @this {NavmeshDatabase}
   */
   load() {
     var data = require("../data/navmesh.json"); // TODO we are probably going to need a better way to load this in, so we can refresh it when a route changes globally
@@ -65,7 +65,7 @@ class GeoDB {
   /**
   * Reset the mesh nodes (Done internally before every search)
   *
-  * @this {GeoDB}
+  * @this {NavmeshDatabase}
   */
   reset() {
     var list = this.cache.list();
@@ -78,7 +78,7 @@ class GeoDB {
   /**
   * Get data from vertice A to vertice B
   *
-  * @this {GeoDB}
+  * @this {NavmeshDatabase}
   * @param {number} idA Vertice A ID / Index
   * @param {number} idB Vertice B ID / Index
   * @return {object} Object containing edge data
@@ -96,7 +96,7 @@ class GeoDB {
   /**
   * Get area for clearance intergration from vertice A to vertice B
   *
-  * @this {GeoDB}
+  * @this {NavmeshDatabase}
   * @param {number} idA Vertice A ID / Index
   * @param {number} idB Vertice B ID / Index
   * @return {array} Array containing approximate clearance data, returns null if not found
@@ -122,7 +122,7 @@ class GeoDB {
   /**
   * Get a vertice specified by ID / Index
   *
-  * @this {GeoDB}
+  * @this {NavmeshDatabase}
   * @param {number} id Vertice ID / Index
   * @return {Vertice} Vertice object, null if not found
   */
@@ -138,7 +138,7 @@ class GeoDB {
   /**
   * Finds the closest vertice to the input coordinates
   *
-  * @this {GeoDB}
+  * @this {NavmeshDatabase}
   * @param {Vector2} vec2 Coordinate
   * @return {Vertice} Closest vertice, null if not found
   */
@@ -148,4 +148,4 @@ class GeoDB {
 
 }
 
-export default GeoDB;
+export default NavmeshDatabase;
