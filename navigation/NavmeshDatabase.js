@@ -92,7 +92,6 @@ class NavmeshDatabase {
     return data.hasOwnProperty(idB) ? data[idB] : null;
   }
 
-
   /**
   * Get area for clearance intergration from vertice A to vertice B
   *

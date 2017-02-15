@@ -87,19 +87,6 @@ class RoutePlotter {
   findClosestNode(vec2) {
     return this.db.findClosestNode(vec2);
   }
-
-  /**
-  * Find data points along the route
-  *
-  * @this {RoutePlotter}
-  * @param {RouteSegment} routeSegment
-  * @param {number} radius Distance from route to search
-  * @param {requestCallback} call (err, result)
-  */
-  findInRouteSegment(radius, routeSegment) {
-    return this.features.findInRoute(radius, routeSegment.waypoints);
-  }
-
 }
 
 export default RoutePlotter;

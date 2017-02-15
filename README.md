@@ -1,18 +1,20 @@
+maputility
+-----
+Framework for performing map related operations
 
+Capabilities:
+- Automatically plot the most efficient routes
+- Search functionality
+- Caching system for geometric shape accelerated by tree structure to enable search and intersection functionality with log(n) efficiency
+- Tools to create navmeshes from geosjon features
 
+------
+####Setup
+> git clone https://github.com/kartverket/maputility
 
-Usage:
+####Generate documentation
+> npm run mkdocs
 
-Navigation as a api class?
-Voyage as a collection class?
-
-var voyage = new Voyage();
-var r = new RoutePlotter();
-var route = r.plot(start, end);
-
-voyage.remove(index);
-voyage.pop();
-voyage.push(route);
-voyage.add(index, route);
-
-voyage.render();
+------
+#### Author
+Leif Andreas Rudlang
