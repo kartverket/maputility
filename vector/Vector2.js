@@ -217,6 +217,7 @@ class Vector2 {
     }
 
     var t = ((this.x - p0.x) * (p1.x - p0.x) + (this.y - p0.y) * (p1.y - p0.y)) / l2;
+
     t = Math.max(0, Math.min(1, t));
     var px = p0.x + (p1.x - p0.x) * t;
     var py = p0.y + (p1.y - p0.y) * t;

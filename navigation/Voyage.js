@@ -32,6 +32,13 @@ class Voyage extends EventEmitter {
     this.routes = [];
   }
 
+  /**
+  * Called whenever a route is replotted
+  *
+  * @this {Voyage}
+  * @param {error} err
+  * @param {Route} route
+  */
   onPlotterUpdate(err, route) {
     if(err) {
       this.emit(Updates.PLOTTER_ERROR, err);
@@ -85,7 +92,6 @@ class Voyage extends EventEmitter {
     call();
   }
 
-
   /**
   * Set the waypoint at the given position
   *
@@ -101,7 +107,7 @@ class Voyage extends EventEmitter {
       if(len > 1) {
         this.plotter.plot(
           [
-            this.wayopints[0],
+            this.waypoints[0],
             this.waypoints[1]
           ],
           (err, route)=>{
@@ -149,7 +155,6 @@ class Voyage extends EventEmitter {
       }
     }
   }
-
 
   /**
   * Inserts a waypoint at the given location
@@ -256,7 +261,7 @@ class Voyage extends EventEmitter {
   }
 
   /**
-  *
+  * Set a new backing array for waypoints, and replot the entire route
   *
   * @this {Voyage}
   * @param {arr} arr
@@ -407,7 +412,7 @@ class Voyage extends EventEmitter {
     for(; i < len; i++) {
       distance += this.routes[i].distance();
     }
-    
+
     call(null,
       {
         distance: distance
