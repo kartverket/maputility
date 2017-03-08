@@ -94,6 +94,7 @@ class RouteRenderer {
       coordinates: this.generatePolygon(waypoints),
       color: this.color,
       fillColor: this.color,
+      strokeAlpha: this.alpha,
       alpha: this.alpha / 4,
       fillAlpha: this.alpha
     };

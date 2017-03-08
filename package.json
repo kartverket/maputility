@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "EventEmitter": "^1.0.0",
+    "jstoxml": "^0.2.4",
     "priorityqueuejs": "^1.0.0"
   },
   "devDependencies": {
