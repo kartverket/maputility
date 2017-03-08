@@ -151,7 +151,6 @@ class GeometryTree {
 
       if(offset <= intersect) {
         if(offset < radius) {
-          console.log(offset);
           result.push(n.element);
         }
         n.findIntersectLine(radius, p0, p1, result);

@@ -64,6 +64,9 @@ class Voyage extends EventEmitter {
           call(err, route);
         }
       );
+
+    } else {
+      call(null, null);
     }
   }
 
@@ -147,6 +150,77 @@ class Voyage extends EventEmitter {
     }
   }
 
+
+  /**
+  * Inserts a waypoint at the given location
+  *
+  * @this {Voyage}
+  * @param {number} index
+  * @param {Waypoint} waypoint
+  * @param {requestCallback} call
+  */
+  insert(index, waypoint, call) {
+    let len = this.waypoints.length;
+
+    if(len === 0 || index >= len) {
+      this.push(waypoint, call);
+    } else {
+
+      if(index === 0) {
+
+        this.plotter.plot(
+          [
+            waypoint,
+            this.waypoints[0]
+          ],
+          (err, route) => {
+            if(err) {
+              call(err);
+            } else {
+              this.waypoints.unshift(waypoint);
+              this.routes.unshift(route);
+              this.onPlotterUpdate(err, route);
+              call(null, route);
+            }
+          }
+        );
+
+      } else {
+
+        this.plotter.plot(
+          [
+            waypoint,
+            this.waypoints[index]
+          ],
+          (err, routeFromWaypoint) => {
+            if(err) {
+              call(err);
+            } else {
+
+              this.plotter.plot(
+                [
+                  this.waypoints[index - 1],
+                  waypoint
+                ],
+                (err, routeToWaypoint) => {
+                  if(err) {
+                    call(err);
+                  } else {
+                    this.waypoints.splice(index, 0, waypoint);
+                    this.routes[index-1] = routeFromWaypoint;
+                    this.routes.splice(index-1, 0, routeToWaypoint);
+                    this.onPlotterUpdate(err, routeFromWaypoint);
+                    call(null, routeToWaypoint, routeFromWaypoint);
+                  }
+                }
+              );
+            }
+          }
+        );
+      }
+    }
+  }
+
   /**
   * Remove the waypoint at the given index
   *
@@ -182,13 +256,52 @@ class Voyage extends EventEmitter {
   }
 
   /**
+  *
+  *
+  * @this {Voyage}
+  * @param {arr} arr
+  * @param {requestCallback} call
+  */
+  reset(arr, call) {
+    if(arr.length < 2) {
+      this.waypoints = arr;
+      this.routes = [];
+      call();
+      return;
+    }
+
+    let counter = arr.length - 1;
+    let routes = [];
+
+    for(let i = 1; i < arr.length; i++) {
+      routes.push(null);
+
+      this.plotter.plot([
+        arr[i - 1],
+        arr[i]
+      ], (err, route) => {
+        if(err) {
+          call(err);
+        } else {
+          routes[i - 1] = route;
+          if(--counter <= 0) {
+            this.waypoints = arr;
+            this.routes = routes;
+            call();
+          }
+        }
+      });
+    }
+  }
+
+  /**
   * Create a segmentation at the specfied position
   *
   * @this {Voyage}
   * @param {Vector2} vec2
   * @param {requestCallback} call (error, segmentation)
   */
-  makeSegmentation(vec2, call) {
+  makeSegmentation(radius, vec2, call) {
 
     if(this.routes.length === 0) {
       call("You need to specify atleast 2 points before segmenting", null);
@@ -196,6 +309,12 @@ class Voyage extends EventEmitter {
     }
 
     var cwp = this.getClosestPoint(vec2);
+
+    if(cwp[2] > radius) {
+      call(null, null);
+      return;
+    }
+
     var route = this.routes[cwp[0]], point = route.path[cwp[1]];
     var wps = route.waypoints, segments = route.segments;
     var arr = [], dist = 0, min = Number.MAX_VALUE, segment = 0;
@@ -208,9 +327,14 @@ class Voyage extends EventEmitter {
       }
     }
 
-    let s = new Segmentation(cwp[0], segment + 1, wps);
-    s.setPosition(point.x, point.y);
-    call(null, s);
+    if(min > radius) {
+      call(null, null);
+    } else {
+      let s = new Segmentation(cwp[0], segment + 1, wps);
+      s.setPosition(point.x, point.y);
+      call(null, s);
+    }
+
   }
 
   /**
@@ -250,6 +374,46 @@ class Voyage extends EventEmitter {
     return this.features;
   }
 
+  /**
+  * Find the features close to the route
+  *
+  * @this {Voyage}
+  * @return {array}
+  */
+  findFeaturesInRoute(index, radius, call) {
+    if(this.waypoints.length < 2 || index >= this.routes.length) {
+      call("Too few waypoints", null);
+      return;
+    }
+
+    let route = this.routes[index];
+    let result = this.features.findInRoute(radius, route.waypoints);
+    call(null, result);
+  }
+
+  /**
+  * Get metadata about the route
+  *
+  * @this {Voyage}
+  * @param {requestCallback} call (err, { distance })
+  */
+  metadata(call) {
+    if(this.waypoints.length < 2) {
+      call("Too few waypoints", null);
+      return;
+    }
+    let i = 0, distance = 0, len = this.routes.length;
+
+    for(; i < len; i++) {
+      distance += this.routes[i].distance();
+    }
+    
+    call(null,
+      {
+        distance: distance
+      }
+    );
+  }
 
   /**
   * Get the backing route array
@@ -295,7 +459,7 @@ class Voyage extends EventEmitter {
       }
     }
 
-    return [rCurrent, pCurrent];
+    return [rCurrent, pCurrent, min];
   }
 
   /**

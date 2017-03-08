@@ -23,6 +23,7 @@ class Route {
     this.renderer = new RouteRenderer();
     this.renderer.setWidth(5);
     this.renderer.setAlpha(1);
+    this.prerender = null;
   }
 
   /**
@@ -75,7 +76,6 @@ class Route {
     }
 
     result.push(end);
-    console.log("result", result);
     return this.cardinalSplineInterpolation(result);
   }
 
@@ -259,10 +259,15 @@ class Route {
   * @return {array} Array of mapbox annotations representing this route
   */
   render(id) {
-    return [
-      this.renderer.renderPolygon("route_polygon_" + id, this.path),
-      this.renderer.render("route_line_" + id, this.path)
-    ];
+
+    if(this.prerender === null) {
+      this.prerender = [
+        this.renderer.renderPolygon("route_polygon_" + id, this.path),
+        this.renderer.render("route_line_" + id, this.path)
+      ];
+    }
+
+    return this.prerender;
   }
 
   /**

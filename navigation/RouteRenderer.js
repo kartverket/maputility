@@ -135,7 +135,7 @@ class RouteRenderer {
 
     resultRight.push(p1.toArray());
     var result = resultRight.concat(resultLeft.reverse());
-    console.log("RESULT", result);
+    //console.log("RESULT", result);
     return result;
   }
 

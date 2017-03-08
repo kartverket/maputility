@@ -271,6 +271,10 @@ class Vector2 {
   equals(vec2) {
     return this.x === vec2.x && this.y === vec2.y;
   }
+
+  hash() {
+    return (this.x.toFixed(2) + "x" + this.y.toFixed(2));
+  }
 }
 
 export default Vector2;

@@ -24,6 +24,7 @@ class Waypoint extends Vector2 {
   toString() {
     return (this.data ? this.data + " ": "") + "(" + super.toString() + ")";
   }
+
 }
 
 export default Waypoint;

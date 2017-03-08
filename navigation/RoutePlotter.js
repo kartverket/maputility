@@ -4,6 +4,7 @@ import RouteRenderer from "./RouteRenderer";
 import Vector2 from "../vector/Vector2";
 import Route from "./Route";
 import RouteSegment from "./RouteSegment";
+import PathCache from "../cache/PathCache";
 "use strict";
 
 /**
@@ -25,6 +26,7 @@ class RoutePlotter {
   * @this {RoutePlotter}
   */
   constructor() {
+    this.cache = new PathCache();
     this.db = new NavmeshDatabase();
     this.db.load();
   }
@@ -39,14 +41,23 @@ class RoutePlotter {
     if(waypoints.length < 2) {
       call("Need atleast 2 waypoints to plot a route", null);
     } else {
-      var len = waypoints.length, routeSegment = null, i = 1;
-      var route = new Route(waypoints);
-      for(; i < len; i++) {
-        routeSegment = this.calculateRouteSegment(waypoints[i - 1], waypoints[i]);
-        route.push(routeSegment);
+      var hash = this.pathHash(waypoints);
+      if(this.cache.contains(hash)) {
+        // Fetch route from cache
+        var data = this.cache.get(hash);
+        call(null, data);
+      } else {
+        // Route not found in cache, recalculate
+        var len = waypoints.length, routeSegment = null, i = 1;
+        var route = new Route(waypoints);
+        for(; i < len; i++) {
+          routeSegment = this.calculateRouteSegment(waypoints[i - 1], waypoints[i]);
+          route.push(routeSegment);
+        }
+        route.update();
+        this.cache.set(hash, route);
+        call(null, route);
       }
-      route.update();
-      call(null, route);
     }
   }
 
@@ -86,6 +97,14 @@ class RoutePlotter {
   */
   findClosestNode(vec2) {
     return this.db.findClosestNode(vec2);
+  }
+
+  pathHash(path) {
+    var hash = "";
+    for(var i = 0; i < path.length; i++) {
+      hash += path[i].hash()+"#";
+    }
+    return hash;
   }
 }
 
