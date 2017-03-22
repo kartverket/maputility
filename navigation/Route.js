@@ -1,5 +1,6 @@
 import RouteRenderer from "./RouteRenderer";
 import Vector2 from "../vector/Vector2";
+import Waypoint from "../vector/Waypoint";
 "use strict";
 
 /**
@@ -62,7 +63,9 @@ class Route {
     }
 
     for(var i = 2; i < len - 2; i++) {
-      result.push(arr[i]);
+      if(!arr[i].equals(arr[i - 1])) { // TODO Hacky, make it better
+        result.push(arr[i]);
+      }
     }
 
     if(arr.length > 2) {
@@ -106,7 +109,9 @@ class Route {
 
     ab.mulScalar(t, ab);
     ab.add(a, ab);
-    return ab;
+    var nwp = new Waypoint(ab.x, ab.y);
+    nwp.setClearance(b.getClearance());
+    return nwp;
   }
 
   /**
@@ -124,7 +129,7 @@ class Route {
     var st = 0, st2 = 0, st3 = 0;
     var c1 = 0, c2 = 0, c3 = 0, c4 = 0;
     var c1r = [], c2r = [], c3r = [], c4r = [];
-    var result = [arr[0]];
+    var result = [arr[0]], nwp = null;
 
     for(t = 0; t <= resolution; t++) {
       st = t / resolution;
@@ -153,12 +158,12 @@ class Route {
         c3 = c3r[t];
         c4 = c4r[t];
 
-        result.push(
-          new Vector2(
-            (c1 * arr[i].x) + (c2 * arr[i+1].x) + (c3 * t1.x) + (c4 * t2.x),
-            (c1 * arr[i].y) + (c2 * arr[i+1].y) + (c3 * t1.y) + (c4 * t2.y)
-          )
+        nwp = new Waypoint(
+          (c1 * arr[i].x) + (c2 * arr[i+1].x) + (c3 * t1.x) + (c4 * t2.x),
+          (c1 * arr[i].y) + (c2 * arr[i+1].y) + (c3 * t1.y) + (c4 * t2.y)
         );
+        nwp.setClearance(arr[i].getClearance());
+        result.push(nwp);
       }
     }
 
@@ -258,7 +263,7 @@ class Route {
   * @this {Route}
   * @return {array} Array of mapbox annotations representing this route
   */
-  render(id) {
+  render(id, db) {
 
     if(this.prerender === null) {
       this.prerender = [

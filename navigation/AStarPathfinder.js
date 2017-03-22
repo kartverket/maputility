@@ -2,6 +2,7 @@ import Pathfinder from "./Pathfinder";
 import PriorityQueue from "priorityqueuejs";
 import BinaryFilter from "./BinaryFilter";
 import Vector2 from "../vector/Vector2";
+import Waypoint from "../vector/Waypoint";
 
 /**
 * AStarPathfinder, class to perform pathfinding using the A* Algorithm
@@ -92,10 +93,14 @@ class AStarPathfinder extends Pathfinder {
   * @return {array} {array} Array of route coordinates {x, y, index}
   */
   reconstructPath(start, end) {
-    var path = [end.position.clone()], curr = end;
+    var endwp = new Waypoint(end.position.x, end.position.y);
+    endwp.setClearance(end.clr);
+    var path = [endwp], curr = end, nwp = null;
     while(curr !== start && curr.cameFrom !== null) {
       curr = curr.cameFrom;
-      path.unshift(curr.position.clone());
+      nwp = new Waypoint(curr.position.x, curr.position.y);
+      nwp.setClearance(curr.clr);
+      path.unshift(nwp);
     }
     this.db.reset();
     return path;

@@ -1,5 +1,7 @@
-import Vector2 from "../vector/Vector2";
+import Waypoint from "../vector/Waypoint";
 "use strict";
+
+const THRESHOLD = 0.1;
 
 /**
 * Class representing a route segmentation
@@ -18,11 +20,13 @@ class Segmentation {
   * @param {number} segment Segment index
   * @param {array} waypoints Waypoint array to manipulate
   */
-  constructor(route, segment, waypoints) {
+  constructor(route, segment, waypoints, distance) {
     this.route = route;
     this.segment = segment;
     this.waypoints = waypoints;
-    this.position = new Vector2(0, 0);
+    this.distance = distance;
+    this.position = new Waypoint(0, 0);
+    this.oldSegment = null;
     this.alive = false;
     this.make();
   }
@@ -45,7 +49,11 @@ class Segmentation {
   */
   destroy() {
     if(this.alive) {
-      this.waypoints.splice(this.segment, 1);
+      if(this.oldSegment !== null) {
+        this.waypoints[this.segment] = this.oldSegment;
+      } else {
+        this.waypoints.splice(this.segment, 1);
+      }
       this.alive = false;
     }
   }
@@ -57,7 +65,17 @@ class Segmentation {
   */
   make() {
     if(!this.alive) {
-      this.waypoints.splice(this.segment, 0, this.position);
+      if(
+        this.distance < THRESHOLD &&
+        this.waypoints.length > 2 &&
+        this.segment > 0 &&
+        this.segment < this.waypoints.length - 1
+      ) {
+        this.oldSegment = this.waypoints[this.segment];
+        this.waypoints[this.segment] = this.position;
+      } else {
+        this.waypoints.splice(this.segment, 0, this.position);
+      }
       this.alive = true;
     }
   }

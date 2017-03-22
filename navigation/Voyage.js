@@ -335,7 +335,7 @@ class Voyage extends EventEmitter {
     if(min > radius) {
       call(null, null);
     } else {
-      let s = new Segmentation(cwp[0], segment + 1, wps);
+      let s = new Segmentation(cwp[0], segment + 1, wps, min);
       s.setPosition(point.x, point.y);
       call(null, s);
     }
@@ -455,7 +455,7 @@ class Voyage extends EventEmitter {
       route = this.routes[i];
       path = route.path;
       for(j = 0; j < path.length; j++) {
-        dist = vec2.distance(path[j]);
+        dist = vec2.fgDistance(path[j]);
         if(dist < min) {
           min = dist;
           rCurrent = i;

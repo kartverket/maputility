@@ -2,6 +2,8 @@
 
 
 const RADIUS_EARTH = 6371;
+const DEG_PER_RADIAN = 0.0174532925;
+const DEG_LENGTH = 1.1025;
 
 /**
 * Vector2
@@ -202,6 +204,19 @@ class Vector2 {
   }
 
   /**
+  * Fast, but less accurate geographic distance
+  *
+  * @this {Vector2}
+  * @param {Vector2} vec2
+  * @return {number} distance
+  */
+  fgDistance(vec2) {
+    var dx = (this.x - vec2.x);
+    var dy = (this.y - vec2.y) * Math.cos(vec2.x * DEG_PER_RADIAN);
+    return Math.sqrt((dx * dx) + (dy * dy)) * DEG_LENGTH;
+  }
+
+  /**
   * Calculates the distance from a finite line defined by the two input coordinates
   *
   * @this {Vector2}
@@ -226,6 +241,32 @@ class Vector2 {
 
     return Math.sqrt((dx * dx) + (dy * dy));
   }
+
+  /**
+  * Calculates the distance from a finite line defined by the two input coordinates
+  * Fast Geographic version
+  *
+  * @this {Vector2}
+  * @param {Vector2} p0 Start of line
+  * @param {Vector2} p1 End of line
+  * @return {number} minimum distance from this vector to the line
+  */
+  fgDistanceFromLine(p0, p1) {
+    var l2 = p0.distance(p1);
+
+    if(l2 === 0) {
+      return this.distance(p0);
+    }
+
+    var t = ((this.x - p0.x) * (p1.x - p0.x) + (this.y - p0.y) * (p1.y - p0.y)) / l2;
+    t = Math.max(0, Math.min(1, t));
+    var px = p0.x + (p1.x - p0.x) * t;
+    var py = p0.y + (p1.y - p0.y) * t;
+    var dx = this.x - px;
+    var dy = (this.y - py) * Math.cos(px * DEG_PER_RADIAN);
+    return Math.sqrt((dx * dx) + (dy * dy)) * DEG_LENGTH;
+  }
+
 
   /**
   * Clone this vector onto a existing vector, or create a new one if none is supplied

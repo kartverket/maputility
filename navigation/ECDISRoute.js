@@ -14,12 +14,11 @@ class ECDISRoute {
     this.json = {};
   }
 
-
   make() {
 
   }
 
-  import() {
+  import(data) {
 
   }
 

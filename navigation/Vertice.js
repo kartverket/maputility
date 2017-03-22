@@ -49,7 +49,7 @@ class Vertice extends Geometry {
   * @return {number}
   */
   distanceTo(vertice) {
-    return this.position.distance(vertice.position);
+    return this.position.fgDistance(vertice.position);
   }
 
   /**

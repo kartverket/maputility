@@ -104,7 +104,7 @@ class GeometryTree {
   * @return {boolean} True if intersects
   */
   intersectsLine(radius, p0, p1) {
-    var offset = this.element.position.distanceFromLine(p0, p1);
+    var offset = this.element.position.fgDistanceFromLine(p0, p1);
     var intersect = this.radius + radius;
     return offset <= intersect;
   }
@@ -146,7 +146,7 @@ class GeometryTree {
         continue;
       }
 
-      offset = n.element.position.distanceFromLine(p0, p1);
+      offset = n.element.position.fgDistanceFromLine(p0, p1);
       intersect = n.radius + radius;
 
       if(offset <= intersect) {

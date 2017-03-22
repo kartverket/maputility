@@ -96,7 +96,7 @@ class GeometryCache {
 
     for(; i < result.length; i++) {
       shape = result[i];
-      d = shape.position.distance(vec2);
+      d = shape.position.fgDistance(vec2);
       if(d < delta) {
         delta = d;
         curr = shape;

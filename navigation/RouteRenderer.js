@@ -1,6 +1,9 @@
 import Vector2 from "../vector/Vector2";
 "use strict";
 
+const DEG_PER_RADIAN = 0.0174532925;
+const DEG_LENGTH = 1.1025;
+
 /**
 * RouteRenderer, class to create mapbox annotations from generates routes
 * @author Leif Andreas Rudlang
@@ -107,7 +110,7 @@ class RouteRenderer {
   * @param {array} clearances Width of polygon
   * @return {array}
   */
-  generatePolygon(arr, clearances) {
+  generatePolygon(arr) {
     let len = arr.length, i = 1,
     resultLeft = [], resultRight = [],
     delta = new Vector2(0, 0), perp = new Vector2(0, 0), p2 = new Vector2(0, 0),
@@ -121,10 +124,11 @@ class RouteRenderer {
       if(p0.equals(p1)) {
         continue;
       }
-      clearance = 0.005;//clearances[i - 1]
+      clearance = p1.getClearance();
       p1.sub(p0, delta);
       delta.normalize();
       delta.perpendicular(perp);
+      perp.x = perp.x * Math.cos(p0.x * DEG_PER_RADIAN);
       perp.mulScalar(clearance, perp);
       p0.add(perp, p2);
       resultLeft.push(p2.toArray());

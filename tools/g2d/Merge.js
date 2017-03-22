@@ -30,7 +30,7 @@ class Merge {
 
     for(var i = 0; i < alen; i++) {
       line = lines[i];
-      dist = p.distanceFromLine(line[0], line[1]);
+      dist = p.fgDistanceFromLine(line[0], line[1]);
       min = dist < min ? dist : min;
     }
 
@@ -198,13 +198,13 @@ class Merge {
   }
 
   verifyPointLineDistance(idx, a, b) {
-    var len = a.distance(b);
+    var len = a.fgDistance(b);
     return (len < 0.0001 || len <= this.clearance[idx]) ? [b, len] : null;
   }
 
   mergeTwoPoints(i, j) {
     var p0 = this.path.coordinates[i], p1 = this.path.coordinates[j];
-    var dist = p0.distance(p1);
+    var dist = p0.fgDistance(p1);
     var adj = this.path.adjacents;
     var offset = this.clearance[i] + this.clearance[j];
 
@@ -245,7 +245,7 @@ class Merge {
   checkAdjacent(i, j) {
     var p0 = this.path.coordinates[i];
     var p1 = this.path.coordinates[j];
-    var dist = p0.distance(p1);
+    var dist = p0.fgDistance(p1);
 
     if(dist < 0.25) {
       return false;
@@ -288,7 +288,7 @@ class Merge {
 
   checknpoint(clearance, p0, t, odist) {
     var p1 = this.path.coordinates[t];
-    var distance = p0.distance(p1);
+    var distance = p0.fgDistance(p1);
     var offset = 1.25 * (clearance + this.clearance[t]);
 
     return distance < 1 && distance > 0.1 && offset > distance;
