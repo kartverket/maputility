@@ -124,7 +124,7 @@ class RouteRenderer {
       if(p0.equals(p1)) {
         continue;
       }
-      clearance = p1.getClearance();
+      clearance = Math.min(0.5, Math.max(p1.getClearance(), 0.005));
       p1.sub(p0, delta);
       delta.normalize();
       delta.perpendicular(perp);
@@ -139,7 +139,6 @@ class RouteRenderer {
 
     resultRight.push(p1.toArray());
     var result = resultRight.concat(resultLeft.reverse());
-    //console.log("RESULT", result);
     return result;
   }
 

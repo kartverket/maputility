@@ -1,7 +1,7 @@
 import Waypoint from "../vector/Waypoint";
 "use strict";
 
-const THRESHOLD = 0.1;
+const THRESHOLD = 0.05;
 
 /**
 * Class representing a route segmentation

@@ -11,6 +11,7 @@ class GeoJSON {
     this.adjacents = [];
     this.lines = [];
     this.area = [];
+    this.priority = [];
   }
 
   load() {
@@ -92,13 +93,21 @@ class GeoJSON {
     }
   }
 
+  getPriority(type) {
+    switch(type) {
+      case 2: return 2;
+      case 1: return 3;
+    }
+    return 1;
+  }
+
   findIndex(vec) {
     var p = null, i = 0;
 
     for(; i < this.coordinates.length; i++) {
       p = this.coordinates[i];
       if(p.x === vec.x && p.y === vec.y) {
-      //if(p.distance(vec) < 0.00001 || p.x === vec.x && p.y === vec.y) {
+        //if(p.distance(vec) < 0.00001 || p.x === vec.x && p.y === vec.y) {
         return i;
       }
     }

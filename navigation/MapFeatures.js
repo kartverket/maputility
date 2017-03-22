@@ -70,7 +70,7 @@ class MapFeatures {
   * @param {number}
   * @return {array}
   */
-  findInRoute(radius, waypoints) {
+  findInRoutePerStretch(radius, waypoints) {
     var result = [], p0 = null, p1 = waypoints[0], i = 1;
     for(; i < waypoints.length; i++) {
       p0 = p1;
@@ -79,6 +79,28 @@ class MapFeatures {
     }
     return result;
   }
+
+  /**
+  * Find features adjacent to the route
+  *
+  * @this {MapFeatures}
+  * @param {array}
+  * @param {number}
+  * @return {array}
+  */
+  findInRoute(radius, waypoints) {
+    var result = new Set(), searchResult = null, p0 = null, p1 = waypoints[0], i = 1, j = 0;
+    for(; i < waypoints.length; i++) {
+      p0 = p1;
+      p1 = waypoints[i];
+      searchResult = this.cache.findInLine(radius, p0, p1);
+      for(j = 0; j < searchResult.length; j++) {
+        result.add(searchResult[j]);
+      }
+    }
+    return result;
+  }
+
 
   /**
   * Search map features, checks if input is coordinate or text, and passes it on for searching

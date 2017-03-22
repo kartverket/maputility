@@ -380,10 +380,31 @@ class Voyage extends EventEmitter {
   }
 
   /**
-  * Find the features close to the route
+  * Find the features adjacent to the route, sorted into stretches
   *
   * @this {Voyage}
-  * @return {array}
+  * @param {number} index Route Index
+  * @param {number} radius Radius to search from route
+  * @return {requestCallback} call (error, array)
+  */
+  findFeaturesInRoutePerStretch(index, radius, call) {
+    if(this.waypoints.length < 2 || index >= this.routes.length) {
+      call("Too few waypoints", null);
+      return;
+    }
+
+    let route = this.routes[index];
+    let result = this.features.findInRoutePerStretch(radius, route.waypoints);
+    call(null, result);
+  }
+
+  /**
+  * Find the features adjacent to the route, as a unique set
+  *
+  * @this {Voyage}
+  * @param {number} index Route Index
+  * @param {number} radius Radius to search from route
+  * @return {requestCallback} call (error, array)
   */
   findFeaturesInRoute(index, radius, call) {
     if(this.waypoints.length < 2 || index >= this.routes.length) {
@@ -393,7 +414,8 @@ class Voyage extends EventEmitter {
 
     let route = this.routes[index];
     let result = this.features.findInRoute(radius, route.waypoints);
-    call(null, result);
+
+    call(null, Array.from(result));
   }
 
   /**
