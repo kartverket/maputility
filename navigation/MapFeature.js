@@ -19,18 +19,14 @@ class MapFeature extends Point {
     this.type = type;
   }
 
-  render(id) {
+  render(id, image) {
     return {
       id: id,
       coordinates: this.position.toArray(),
       type: "point",
       title: this.name,
       subtitle: this.type,
-      annotationImage: {
-        source: { uri: ICONS[this.type]},
-        height: 25,
-        width: 25
-      }
+      annotationImage: image
     };
   }
 

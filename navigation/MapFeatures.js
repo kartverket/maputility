@@ -90,6 +90,7 @@ class MapFeatures {
   */
   findInRoute(radius, waypoints) {
     var result = new Set(), searchResult = null, p0 = null, p1 = waypoints[0], i = 1, j = 0;
+    console.log("waypoints", waypoints.length);
     for(; i < waypoints.length; i++) {
       p0 = p1;
       p1 = waypoints[i];

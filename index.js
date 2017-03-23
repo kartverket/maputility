@@ -1,5 +1,6 @@
 import RoutePlotter from "./navigation/RoutePlotter";
 import RouteRenderer from "./navigation/RouteRenderer";
+import MapFeatureRenderer from "./navigation/MapFeatureRenderer";
 import Voyage from "./navigation/Voyage";
 import GeometryCache, {Geometry, Polygon, Circle, Point, Line, PolyLine} from "./geometry/GeometryCache";
 import Vertice from "./navigation/Vertice";
@@ -10,6 +11,7 @@ import * as Updates from "./constants/Updates";
 export {
   RoutePlotter,
   RouteRenderer,
+  MapFeatureRenderer,
   Voyage,
   Vector2,
   Waypoint,

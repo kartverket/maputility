@@ -41,6 +41,20 @@ class Route {
   }
 
   /**
+  * Get the fairway waypoints from the route
+  *
+  * @this {Route}
+  * @return {array} [waypoints]
+  */
+  getFairways() {
+    var arr = [], len = this.segments.length, i = 0;
+    for(; i < len; i++) {
+      arr = arr.concat(this.segments[i].path);
+    }
+    return arr;
+  }
+
+  /**
   * Complete the route
   *
   * @this {Route}

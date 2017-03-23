@@ -413,7 +413,7 @@ class Voyage extends EventEmitter {
     }
 
     let route = this.routes[index];
-    let result = this.features.findInRoute(radius, route.waypoints);
+    let result = this.features.findInRoute(radius, route.getFairways());
 
     call(null, Array.from(result));
   }
