@@ -1,5 +1,6 @@
 import GeometryCache from "../geometry/GeometryCache";
-import MapFeature from "./MapFeature";
+import PointMapFeature from "./PointMapFeature";
+import PolygonMapFeature from "./PolygonMapFeature";
 import Vector2 from "../vector/Vector2";
 "use strict";
 
@@ -60,18 +61,16 @@ class MapFeatures {
   addFeature(type, f) {
     switch(f.g) {
       case 0: // Point
-      console.log("Loaded point feature");
+      this.cache.add(new PointMapFeature(type, f));
       break;
       case 1: // Circle
       break;
       case 2: // Polygon
+      this.cache.add(new PolygonMapFeature(type, f));
       break;
       case 3: // Line
       break;
     }
-
-    var mf = new MapFeature(type, f);
-    this.cache.add(mf);
   }
 
   /**

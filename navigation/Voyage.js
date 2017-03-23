@@ -1,6 +1,6 @@
 import RoutePlotter from "./RoutePlotter";
 import GeometryCache from "../geometry/GeometryCache";
-import MapFeatures from "./MapFeatures";
+import MapFeatures from "../mapfeature/MapFeatures";
 import EventEmitter from "EventEmitter";
 import Segmentation from "./Segmentation";
 import * as Updates from "../constants/Updates";
