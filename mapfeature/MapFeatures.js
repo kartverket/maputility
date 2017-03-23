@@ -1,6 +1,8 @@
 import GeometryCache from "../geometry/GeometryCache";
 import PointMapFeature from "./PointMapFeature";
+import CircleMapFeature from "./CircleMapFeature";
 import PolygonMapFeature from "./PolygonMapFeature";
+import LineMapFeature from "./LineMapFeature";
 import Vector2 from "../vector/Vector2";
 "use strict";
 
@@ -64,11 +66,13 @@ class MapFeatures {
       this.cache.add(new PointMapFeature(type, f));
       break;
       case 1: // Circle
+      this.cache.add(new CircleMapFeature(type, f));
       break;
       case 2: // Polygon
       this.cache.add(new PolygonMapFeature(type, f));
       break;
       case 3: // Line
+      this.cache.add(new LineMapFeature(type, f));
       break;
     }
   }
