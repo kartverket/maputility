@@ -95,12 +95,15 @@ class AStarPathfinder extends Pathfinder {
   reconstructPath(start, end) {
     var endwp = new Waypoint(end.position.x, end.position.y);
     endwp.setClearance(end.clr);
-    var path = [endwp], curr = end, nwp = null;
+    var path = [endwp], curr = end, nwp = null, prev = end;
     while(curr !== start && curr.cameFrom !== null) {
       curr = curr.cameFrom;
-      nwp = new Waypoint(curr.position.x, curr.position.y);
-      nwp.setClearance(curr.clr);
-      path.unshift(nwp);
+      if(prev.distanceTo(curr) > 0.0025) {
+        prev = curr;
+        nwp = new Waypoint(curr.position.x, curr.position.y);
+        nwp.setClearance(curr.clr);
+        path.unshift(nwp);
+      }
     }
     this.db.reset();
     return path;

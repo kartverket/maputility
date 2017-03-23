@@ -165,7 +165,6 @@ class Route {
         (arr[i + 2].x - arr[i].x) * tension,
         (arr[i + 2].y - arr[i].y) * tension
       );
-
       for(t = 0; t <= resolution; t++) {
         c1 = c1r[t];
         c2 = c2r[t];

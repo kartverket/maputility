@@ -66,11 +66,11 @@ class GeoJSON {
         adj = this.adjacents[index];
       }
 
-      if(i > 0){
+      if(i > 0) {
         coord = coords[i - 1];
         vec = new Vector2(+coord[0].toFixed(8), +coord[1].toFixed(8));
         let pIndex = this.findIndex(vec);
-        if(adj.indexOf(pIndex) === -1) {
+        if(pIndex !== -1 && adj.indexOf(pIndex) === -1) {
           adj.push(pIndex);
         }
         this.lines.push([
@@ -107,7 +107,7 @@ class GeoJSON {
     for(; i < this.coordinates.length; i++) {
       p = this.coordinates[i];
       if(p.x === vec.x && p.y === vec.y) {
-        //if(p.distance(vec) < 0.00001 || p.x === vec.x && p.y === vec.y) {
+      //if(p.fgDistance(vec) < 0.0001 || p.x === vec.x && p.y === vec.y) {
         return i;
       }
     }

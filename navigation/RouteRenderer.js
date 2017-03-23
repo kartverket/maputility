@@ -111,7 +111,7 @@ class RouteRenderer {
   * @return {array}
   */
   generatePolygon(arr) {
-    let len = arr.length, i = 1,
+    var len = arr.length, i = 1,
     resultLeft = [], resultRight = [],
     delta = new Vector2(0, 0), perp = new Vector2(0, 0), p2 = new Vector2(0, 0),
     p0 = null, p1 = arr[0], clearance = 0;
