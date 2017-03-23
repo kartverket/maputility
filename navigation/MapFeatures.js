@@ -58,6 +58,18 @@ class MapFeatures {
   * @param {object} f Feature data
   */
   addFeature(type, f) {
+    switch(f.g) {
+      case 0: // Point
+      console.log("Loaded point feature");
+      break;
+      case 1: // Circle
+      break;
+      case 2: // Polygon
+      break;
+      case 3: // Line
+      break;
+    }
+
     var mf = new MapFeature(type, f);
     this.cache.add(mf);
   }
@@ -100,7 +112,6 @@ class MapFeatures {
     }
     return result;
   }
-
 
   /**
   * Search map features, checks if input is coordinate or text, and passes it on for searching

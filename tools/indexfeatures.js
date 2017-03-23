@@ -65,11 +65,48 @@ function parseFeature(type, f) {
   }
 
   var region = prop.Kommune || prop.kommune;
+  var coordinates = parseCoordinates(f.geometry);
 
   return {
-    c: [f.geometry.coordinates[1], f.geometry.coordinates[0]],
+    c: coordinates,
+    g: getGeometryType(f.geometry.type),
     d: data,
     n: prop.Name || prop.navn,
     r: region ? region.toLowerCase() : ""
   }
+}
+
+function getGeometryType(type) {
+  switch(type.toLowerCase()) {
+    case "point": return 0;
+    case "circle": return 1;
+    case "polygon": return 2;
+    case "line": return 3;
+  }
+  return 0;
+}
+
+function parseCoordinates(geometry) {
+  switch(geometry.type.toLowerCase()) {
+    case "point":
+    return [+geometry.coordinates[1].toFixed(5), +geometry.coordinates[0].toFixed(5)];
+    case "polygon":
+    return parsePolygon(geometry.coordinates);
+  }
+  return null;
+}
+
+function parsePolygon(mesh) {
+  var len = mesh.length, i = 0, j = 0, sub = null, arr = [];
+  for(; i < len; i++) {
+    arr.push([]);
+    sub = mesh[i];
+    for(j = 0; j < sub.length; j++) {
+      arr[i].push([
+        +sub[j][0].toFixed(5),
+        +sub[j][1].toFixed(5)
+      ]);
+    }
+  }
+  return arr;
 }

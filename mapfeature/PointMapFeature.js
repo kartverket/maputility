@@ -2,7 +2,7 @@ import Point from "../geometry/Point";
 import Waypoint from "../vector/Waypoint";
 
 
-class MapFeature extends Point {
+class PointMapFeature extends Point {
 
   /**
   *
@@ -34,4 +34,4 @@ class MapFeature extends Point {
   }
 }
 
-export default MapFeature;
+export default PointMapFeature;

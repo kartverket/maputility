@@ -1,14 +1,14 @@
-import Point from "../geometry/Point";
+import Polygon from "../geometry/Polygon";
 import Waypoint from "../vector/Waypoint";
 
 
-class MapFeature extends Point {
+class PolygonMapFeature extends Polygon {
 
   /**
   *
   */
   constructor(type, feature) {
-    super(feature.c[0], feature.c[1]);
+    super(feature.c);
     this.name = feature.n;
     this.region = feature.r;
     this.type = type;
@@ -17,11 +17,11 @@ class MapFeature extends Point {
   render(id, image) {
     return {
       id: id,
-      coordinates: this.position.toArray(),
-      type: "point",
-      title: this.name,
-      subtitle: this.type,
-      annotationImage: image
+      coordinates: this.points,
+      type: "polygon",
+      fillColor: "red",
+      fillAlpha: 0.25,
+      alpha: 0.25
     };
   }
 
@@ -34,4 +34,4 @@ class MapFeature extends Point {
   }
 }
 
-export default MapFeature;
+export default PolygonMapFeature;
