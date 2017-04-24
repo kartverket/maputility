@@ -22,7 +22,7 @@ class Route {
     this.segments = [];
     this.path = [];
     this.renderer = new RouteRenderer();
-    this.renderer.setWidth(5);
+    this.renderer.setWidth(3);
     this.renderer.setAlpha(1);
     this.prerender = null;
   }
