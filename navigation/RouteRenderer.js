@@ -21,9 +21,9 @@ class RouteRenderer {
   */
   constructor(db) {
     this.db = db;
-    this.color = "#ff0000";
+    this.color = "#4a4a4a";
     this.alpha = 1;
-    this.width = 5;
+    this.width = 3;
   }
 
   /**
@@ -97,8 +97,10 @@ class RouteRenderer {
       coordinates: this.generatePolygon(waypoints),
       color: this.color,
       fillColor: this.color,
-      alpha: this.alpha / 4,
-      fillAlpha: this.alpha / 4
+      // alpha: this.alpha / 4,
+      alpha: 0,
+      // fillAlpha: this.alpha / 4
+      fillAlpha: 0
     };
   }
 

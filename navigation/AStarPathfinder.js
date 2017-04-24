@@ -32,56 +32,57 @@ class AStarPathfinder extends Pathfinder {
   * @return {array} Array of route coordinates {x, y, index}, null if route not available
   */
   findShortestPath(start, end) {
+    return [start, end]
     // TODO more optimal way of combining filter with PriorityQueue
-    var current = null, i = 0, adjacent = null, node = null;
-    start.gScore = 0;
-    start.fScore = start.heuristicTo(end);
-
-    var openSet = new PriorityQueue((a, b)=>{
-      return b.fScore - a.fScore;
-    });
-
-    var closedFilter = new BinaryFilter();
-    var openFilter = new BinaryFilter();
-    openSet.enq(start);
-    openFilter.add(start.index);
-
-    while(openSet.size() !== 0) {
-      current = openSet.deq();
-      openFilter.remove(current.index);
-
-      if(current === end) {
-        return this.reconstructPath(start, end);
-      }
-
-      closedFilter.add(current.index);
-      adjacent = current.adj;
-
-      for(i = 0; i < adjacent.length; i++) {
-        var adjacentIndex = adjacent[i];
-        node = this.db.getVerticeById(adjacentIndex);
-
-        if(closedFilter.contains(adjacentIndex)) {
-          continue;
-        }
-
-        var tentativeScore = current.gScore + (current.distanceTo(node) * this.heuristic(current, node));
-
-        if(!openFilter.contains(adjacentIndex)) {
-          openSet.enq(node);
-          openFilter.add(adjacentIndex);
-        }else if (tentativeScore >= node.gScore) {
-          continue;
-        }
-
-        node.cameFrom = current;
-        node.gScore = tentativeScore;
-        node.fScore = tentativeScore + node.distanceTo(end);
-      }
-    }
-
-    this.db.reset();
-    return null;
+    // var current = null, i = 0, adjacent = null, node = null;
+    // start.gScore = 0;
+    // start.fScore = start.heuristicTo(end);
+    //
+    // var openSet = new PriorityQueue((a, b)=>{
+    //   return b.fScore - a.fScore;
+    // });
+    //
+    // var closedFilter = new BinaryFilter();
+    // var openFilter = new BinaryFilter();
+    // openSet.enq(start);
+    // openFilter.add(start.index);
+    //
+    // while(openSet.size() !== 0) {
+    //   current = openSet.deq();
+    //   openFilter.remove(current.index);
+    //
+    //   if(current === end) {
+    //     return this.reconstructPath(start, end);
+    //   }
+    //
+    //   closedFilter.add(current.index);
+    //   adjacent = current.adj;
+    //
+    //   for(i = 0; i < adjacent.length; i++) {
+    //     var adjacentIndex = adjacent[i];
+    //     node = this.db.getVerticeById(adjacentIndex);
+    //
+    //     if(closedFilter.contains(adjacentIndex)) {
+    //       continue;
+    //     }
+    //
+    //     var tentativeScore = current.gScore + (current.distanceTo(node) * this.heuristic(current, node));
+    //
+    //     if(!openFilter.contains(adjacentIndex)) {
+    //       openSet.enq(node);
+    //       openFilter.add(adjacentIndex);
+    //     }else if (tentativeScore >= node.gScore) {
+    //       continue;
+    //     }
+    //
+    //     node.cameFrom = current;
+    //     node.gScore = tentativeScore;
+    //     node.fScore = tentativeScore + node.distanceTo(end);
+    //   }
+    // }
+    //
+    // this.db.reset();
+    // return null;
   }
 
   /**
