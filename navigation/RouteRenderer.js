@@ -23,7 +23,7 @@ class RouteRenderer {
     this.db = db;
     this.color = "#4a4a4a";
     this.alpha = 1;
-    this.width = 3;
+    this.width = 2;
   }
 
   /**
