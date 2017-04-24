@@ -225,11 +225,12 @@ class Vector2 {
   * @return {number} minimum distance from this vector to the line
   */
   distanceFromLine(p0, p1) {
-    var l2 = p0.distance(p1);
-
-    if(l2 === 0) {
-      return this.distance(p0);
-    }
+    // var l2 = p0.distance(p1);
+    //
+    // if(l2 === 0) {
+    //   return this.distance(p0);
+    // }
+    var l2 = 5;
 
     var t = ((this.x - p0.x) * (p1.x - p0.x) + (this.y - p0.y) * (p1.y - p0.y)) / l2;
 
@@ -252,11 +253,12 @@ class Vector2 {
   * @return {number} minimum distance from this vector to the line
   */
   fgDistanceFromLine(p0, p1) {
-    var l2 = p0.distance(p1);
-
-    if(l2 === 0) {
-      return this.distance(p0);
-    }
+    // var l2 = p0.distance(p1);
+    //
+    // if(l2 === 0) {
+    //   return this.distance(p0);
+    // }
+    var l2 = 5;
 
     var t = ((this.x - p0.x) * (p1.x - p0.x) + (this.y - p0.y) * (p1.y - p0.y)) / l2;
     t = Math.max(0, Math.min(1, t));
