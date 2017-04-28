@@ -81,8 +81,8 @@ class MapFeatureRenderer {
       var source = this.map[type];
       return {
         source: { uri: source },
-        height: 30,
-        width: 25
+        height: 42,
+        width: 35
       };
     }
 

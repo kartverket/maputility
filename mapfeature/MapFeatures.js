@@ -27,11 +27,53 @@ class MapFeatures {
   }
 
   /**
-  * Loads data from data/features.json into the cache
+  * Loads data from Directus into the cache
   *
   * @this {MapFeatures}
   */
-  load() {
+  load(datasets, _callback) {
+    // var data = require("../data/features.json");
+    // var keys = Object.keys(data);
+    //
+    // for(var i = 0; i < keys.length; i++) {
+    //   this.addCollection(keys[i], data[keys[i]]);
+    // }
+    var counter = 0;
+    function getDataset(url, callback) {
+      return fetch(url)
+        .then((response) => response.text())
+        .then((responseText) => {
+          callback(responseText)
+        })
+        .catch((error) => {
+          //
+        });
+    }
+    datasets.forEach(function(dataset) {
+      getDataset(dataset.url, function(data) {
+        var jsonData = JSON.parse(data);
+        var keys = ['c', 'g', 'd', 'n', 'r'];
+        var _data = [];
+        for (var i = 0; i < jsonData.data.length; i++) {
+          _data.push({
+            c: [
+              jsonData.data[i].valgt_posisjon.split(',')[0],
+              jsonData.data[i].valgt_posisjon.split(',')[1],
+            ],
+            g: 0,
+            d: {},
+            n: jsonData.data[i].stedsnavn,
+            r: jsonData.data[i].stedsnavn,
+            comment: jsonData.data[i].kommentar
+          })
+        }
+        _callback(dataset.name);
+        this.addCollection(dataset.name, _data);
+      }.bind(this));
+    }.bind(this));
+  }
+
+  loadStatic() {
     var data = require("../data/features.json");
     var keys = Object.keys(data);
 

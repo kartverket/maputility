@@ -149,6 +149,8 @@ class GeometryTree {
       offset = n.element.position.fgDistanceFromLine(p0, p1);
       intersect = n.radius + radius;
 
+      console.log('HERE WE GO: ', 'n: ', n, ', p0: ', p0, ', p1: ', p1, ', radius: ', radius, ', offset: ', offset, ', intersect: ', intersect);
+
       if(offset <= intersect) {
         if(offset < radius) {
           result.push(n.element);

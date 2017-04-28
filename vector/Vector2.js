@@ -225,18 +225,17 @@ class Vector2 {
   * @return {number} minimum distance from this vector to the line
   */
   distanceFromLine(p0, p1) {
-    // var l2 = p0.distance(p1);
-    //
-    // if(l2 === 0) {
-    //   return this.distance(p0);
-    // }
-    var l2 = 5;
+    var l2 = p0.distanceTo(p1);
 
-    var t = ((this.x - p0.x) * (p1.x - p0.x) + (this.y - p0.y) * (p1.y - p0.y)) / l2;
+    if(l2 === 0) {
+      return this.distanceTo(p0);
+    }
+
+    var t = ((this.x - p0.getX()) * (p1.getX() - p0.getX()) + (this.y - p0.getY()) * (p1.getY() - p0.getY())) / l2;
 
     t = Math.max(0, Math.min(1, t));
-    var px = p0.x + (p1.x - p0.x) * t;
-    var py = p0.y + (p1.y - p0.y) * t;
+    var px = p0.getX() + (p1.getX() - p0.getX()) * t;
+    var py = p0.getY() + (p1.getY() - p0.getY()) * t;
     var dx = this.x - px;
     var dy = this.y - py;
 
@@ -253,17 +252,16 @@ class Vector2 {
   * @return {number} minimum distance from this vector to the line
   */
   fgDistanceFromLine(p0, p1) {
-    // var l2 = p0.distance(p1);
-    //
-    // if(l2 === 0) {
-    //   return this.distance(p0);
-    // }
-    var l2 = 5;
+    var l2 = p0.distanceTo(p1);
 
-    var t = ((this.x - p0.x) * (p1.x - p0.x) + (this.y - p0.y) * (p1.y - p0.y)) / l2;
+    if(l2 === 0) {
+      return this.distanceTo(p0);
+    }
+
+    var t = ((this.x - p0.getX()) * (p1.getX() - p0.getX()) + (this.y - p0.getY()) * (p1.getY() - p0.getY())) / l2;
     t = Math.max(0, Math.min(1, t));
-    var px = p0.x + (p1.x - p0.x) * t;
-    var py = p0.y + (p1.y - p0.y) * t;
+    var px = p0.getX() + (p1.getX() - p0.getX()) * t;
+    var py = p0.getY() + (p1.getY() - p0.getY()) * t;
     var dx = this.x - px;
     var dy = (this.y - py) * Math.cos(px * DEG_PER_RADIAN);
     return Math.sqrt((dx * dx) + (dy * dy)) * DEG_LENGTH;

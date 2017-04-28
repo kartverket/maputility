@@ -26,10 +26,16 @@ class Voyage extends EventEmitter {
     this.plotter = new RoutePlotter();
     this.cache = new GeometryCache();
     this.features = new MapFeatures();
-    this.features.load();
+    this.staticFeatures = new MapFeatures();
+    // this.features.load();
     this.transactions = [];
     this.waypoints = [];
     this.routes = [];
+  }
+
+  setFeatures(datasets, callback) {
+    this.features.load(datasets, callback);
+    this.staticFeatures.loadStatic()
   }
 
   /**
@@ -380,6 +386,16 @@ class Voyage extends EventEmitter {
   }
 
   /**
+  * Get static features
+  *
+  * @this {Voyage}
+  * @return {MapFeatures}
+  */
+  getStaticFeatures() {
+    return this.staticFeatures;
+  }
+
+  /**
   * Find the features adjacent to the route, sorted into stretches
   *
   * @this {Voyage}
@@ -407,10 +423,10 @@ class Voyage extends EventEmitter {
   * @return {requestCallback} call (error, array)
   */
   findFeaturesInRoute(index, radius, call) {
-    if(this.waypoints.length < 2 || index >= this.routes.length) {
-      call("Too few waypoints", null);
-      return;
-    }
+    // if(this.waypoints.length < 2 || index >= this.routes.length) {
+    //   call("Too few waypoints", null);
+    //   return;
+    // }
 
     let route = this.routes[index];
     let result = this.features.findInRoute(radius, route.getFairways());
