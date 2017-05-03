@@ -46,7 +46,7 @@ class MapFeatures {
           callback(responseText)
         })
         .catch((error) => {
-          //
+          alert('Error getting data.')
         });
     }
     datasets.forEach(function(dataset) {

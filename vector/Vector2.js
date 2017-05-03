@@ -228,7 +228,8 @@ class Vector2 {
     var l2 = p0.distanceTo(p1);
 
     if(l2 === 0) {
-      return this.distanceTo(p0);
+      // return this.distanceTo(p0);
+      return 0;
     }
 
     var t = ((this.x - p0.getX()) * (p1.getX() - p0.getX()) + (this.y - p0.getY()) * (p1.getY() - p0.getY())) / l2;
@@ -255,7 +256,8 @@ class Vector2 {
     var l2 = p0.distanceTo(p1);
 
     if(l2 === 0) {
-      return this.distanceTo(p0);
+      // return this.distanceTo(p0);
+      return 0;
     }
 
     var t = ((this.x - p0.getX()) * (p1.getX() - p0.getX()) + (this.y - p0.getY()) * (p1.getY() - p0.getY())) / l2;
