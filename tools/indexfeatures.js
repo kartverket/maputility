@@ -21,21 +21,21 @@ console.log("Attempting to read geojson file at", fpath);
 
 var data = fs.readFileSync(fpath);
 var json = JSON.parse(data);
-var features = {};
+// var features = {};
 var counter = 0;
 
 
 for(var i = 0; i < json.length; i++) {
   var collection = json[i];
   console.log("Found feature collection: " +  collection.name);
-  features[collection.name] = parseFeatures(collection.name, collection.features);
+  // features[collection.name] = parseFeatures(collection.name, collection.features);
 }
 
-var output = JSON.stringify(features);
+// var output = JSON.stringify(features);
 
 console.log("Parsed " + counter + " features")
 console.log("Operation complete, writing output!");
-fs.writeFile(path.join(__dirname,"../data","features.json"), output);
+// fs.writeFile(path.join(__dirname,"../data","features.json"), output);
 
 function parseFeatures(type, features) {
   var result = [];

@@ -1,5 +1,4 @@
 import Geometry from "./Geometry";
-"use strict";
 
 /**
 * PolyLine, Geometry object representing a polyline

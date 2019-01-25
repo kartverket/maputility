@@ -5,7 +5,6 @@ import Circle from "./Circle";
 import Point from "./Point";
 import Line from "./Line";
 import PolyLine from "./PolyLine";
-"use strict";
 
 /**
 * GeometryCache, Cache for geometric structure, incorporates the GeometryTree structure for geometric search with a minimal processing footprint

@@ -1,5 +1,3 @@
-"use strict";
-
 /**
 * GeometryTree, Optimized tree structure for search and subdivision of geometric structures in 2-Dimensional space
 * @author Leif Andreas Rudlang

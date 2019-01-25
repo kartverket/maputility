@@ -1,5 +1,4 @@
 import Geometry from "../geometry/Geometry";
-"use strict";
 
 /**
 * Vertice, Geometry object representing a graph-vertice

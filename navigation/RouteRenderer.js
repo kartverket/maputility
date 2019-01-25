@@ -1,8 +1,7 @@
 import Vector2 from "../vector/Vector2";
-"use strict";
 
 const DEG_PER_RADIAN = 0.0174532925;
-const DEG_LENGTH = 1.1025;
+// const DEG_LENGTH = 1.1025;
 
 /**
 * RouteRenderer, class to create mapbox annotations from generates routes

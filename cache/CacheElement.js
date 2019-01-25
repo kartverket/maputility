@@ -1,5 +1,3 @@
-"use strict";
-
 /**
 * Element to store in cache
 * @author Leif Andreas Rudlang

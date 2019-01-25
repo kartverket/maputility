@@ -1,10 +1,8 @@
 import RoutePlotter from "./RoutePlotter";
 import GeometryCache from "../geometry/GeometryCache";
-import MapFeatures from "../mapfeature/MapFeatures";
 import EventEmitter from "EventEmitter";
 import Segmentation from "./Segmentation";
 import * as Updates from "../constants/Updates";
-"use strict";
 
 /**
 * Class representing a collection of Routes
@@ -25,8 +23,8 @@ class Voyage extends EventEmitter {
     super();
     this.plotter = new RoutePlotter();
     this.cache = new GeometryCache();
-    this.features = new MapFeatures();
-    this.features.load();
+    // this.features = new MapFeatures();
+    // this.features.load();
     this.transactions = [];
     this.waypoints = [];
     this.routes = [];
@@ -234,7 +232,8 @@ class Voyage extends EventEmitter {
   * @param {requestCallback} call
   */
   remove(index, call) {
-    let wp = this.waypoints.splice(index, 1);
+    this.waypoints.splice(index, 1);
+
     if(this.waypoints.length !== 0) {
       this.routes.splice(index - 1 , 1);
       if(index > 0 && index < this.waypoints.length){
@@ -322,7 +321,7 @@ class Voyage extends EventEmitter {
 
     var route = this.routes[cwp[0]], point = route.path[cwp[1]];
     var wps = route.waypoints, segments = route.segments;
-    var arr = [], dist = 0, min = Number.MAX_VALUE, segment = 0;
+    var dist = 0, min = Number.MAX_VALUE, segment = 0;
 
     for(var i = 0; i < route.segments.length; i++) {
       dist = segments[i].distanceTo(point);

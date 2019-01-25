@@ -1,6 +1,4 @@
 import CacheElement from "./CacheElement";
-"use strict";
-
 
 /**
 * Cache to store paths referenced by waypoint hashes

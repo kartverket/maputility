@@ -4,7 +4,6 @@ import CircleMapFeature from "./CircleMapFeature";
 import PolygonMapFeature from "./PolygonMapFeature";
 import LineMapFeature from "./LineMapFeature";
 import Vector2 from "../vector/Vector2";
-"use strict";
 
 /**
 * MapFeatures class
@@ -32,12 +31,12 @@ class MapFeatures {
   * @this {MapFeatures}
   */
   load() {
-    var data = require("../data/features.json");
-    var keys = Object.keys(data);
-
-    for(var i = 0; i < keys.length; i++) {
-      this.addCollection(keys[i], data[keys[i]]);
-    }
+    // var data = require("../data/features.json");
+    // var keys = Object.keys(data);
+    //
+    // for(var i = 0; i < keys.length; i++) {
+    //   this.addCollection(keys[i], data[keys[i]]);
+    // }
   }
 
   /**
@@ -47,11 +46,11 @@ class MapFeatures {
   * @param {string} type Feature type
   * @param {array} data Array of feature data
   */
-  addCollection(type, data) {
-    for(var i = 0; i < data.length; i++) {
-      this.addFeature(type, data[i]);
-    }
-  }
+  // addCollection(type, data) {
+  //   for(var i = 0; i < data.length; i++) {
+  //     this.addFeature(type, data[i]);
+  //   }
+  // }
 
   /**
   * Adds a feature to the cache
@@ -73,6 +72,8 @@ class MapFeatures {
       break;
       case 3: // Line
       this.cache.add(new LineMapFeature(type, f));
+      break;
+      default:
       break;
     }
   }
@@ -130,7 +131,7 @@ class MapFeatures {
     }
 
     let c = query[0];
-    if(c === '(' || c === '-' || c >= '0' && c <= '9') {
+    if((c === '(') || (c === '-') || (c >= '0' && c <= '9')) {
       // Coordinate search
       let x = 0, y = 0, len = query.length, i = 0, j = 0;
       let buffer = ["",""];

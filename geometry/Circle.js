@@ -1,5 +1,4 @@
 import Geometry from "./Geometry";
-"use strict";
 
 /**
 * Circle, Geometry object representing a circle

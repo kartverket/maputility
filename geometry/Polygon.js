@@ -1,5 +1,4 @@
 import Geometry from "./Geometry";
-"use strict";
 
 /**
 * Polygon, Geometry object representing a polygon
@@ -79,7 +78,7 @@ class Polygon extends Geometry {
       var xj = arr[j][0], yj = arr[j][1];
 
       if (
-        ((yi > y) != (yj > y)) &&
+        ((yi > y) !== (yj > y)) &&
         (x < ((xj - xi) * (y - yi) / (yj - yi) + xi))
       ){
         inside = !inside;

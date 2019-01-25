@@ -8,9 +8,11 @@ import Vector2 from "./Vector2";
 */
 class Waypoint extends Vector2 {
 
-  constructor(x, y, data) {
+  constructor(x, y, name, kommune, fylke) {
     super(x, y);
-    this.data = data;
+    this.name = name;
+    this.kommune = kommune;
+    this.fylke = fylke;
     this.clearance = 0.0025;
   }
 
@@ -22,16 +24,33 @@ class Waypoint extends Vector2 {
     return this.clearance;
   }
 
-  setData(data) {
-    this.data = data;
+  setName(name) {
+    this.name = name;
   }
 
-  getData() {
-    return this.data;
+  getName() {
+    return this.name;
   }
 
+  setKommune(kommune) {
+    this.kommune = kommune;
+  }
+
+  getKommune() {
+    return this.kommune;
+  }
+
+  setFylke(fylke) {
+    this.fylke = fylke;
+  }
+
+  getFylke() {
+    return this.fylke;
+  }
+
+  // TODO: add kommune and fylke
   toString() {
-    return (this.data ? this.data + " ": "") + "(" + super.toString() + ")";
+    return (this.name ? this.name + " ": "") + "(" + super.toString() + ")";
   }
 
 }

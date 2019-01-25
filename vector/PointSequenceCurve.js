@@ -1,7 +1,5 @@
 import Vector2 from "./Vector2";
 import LineSegment from "./LineSegment";
-"use strict";
-
 
 /**
 * Class representing a point sequence curve
@@ -43,7 +41,7 @@ class PointSequenceCurve {
 
       if(t !== -1){
         // Line interference, filter out current normal
-        
+
 
 
       } else {

@@ -1,6 +1,3 @@
-"use strict";
-
-
 const RADIUS_EARTH = 6371;
 const DEG_PER_RADIAN = 0.0174532925;
 const DEG_LENGTH = 1.1025;

@@ -1,5 +1,4 @@
 import Geometry from "./Geometry";
-"use strict";
 
 /**
 * Line, Geometry object representing a line

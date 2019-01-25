@@ -1,5 +1,4 @@
 import Vector2 from "../vector/Vector2";
-"use strict";
 
 /**
 * Geometry, Abstract class, implement this for structures to be searchable in the geometry system

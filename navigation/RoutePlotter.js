@@ -1,11 +1,10 @@
 import NavmeshDatabase from "./NavmeshDatabase";
 import AStarPathfinder from "./AStarPathfinder";
-import RouteRenderer from "./RouteRenderer";
-import Vector2 from "../vector/Vector2";
+// import RouteRenderer from "./RouteRenderer";
+// import Vector2 from "../vector/Vector2";
 import Route from "./Route";
 import RouteSegment from "./RouteSegment";
 import PathCache from "../cache/PathCache";
-"use strict";
 
 /**
 * RoutePlotter, Main RoutePlotter class

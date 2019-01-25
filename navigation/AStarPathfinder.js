@@ -1,7 +1,7 @@
 import Pathfinder from "./Pathfinder";
 import PriorityQueue from "priorityqueuejs";
 import BinaryFilter from "./BinaryFilter";
-import Vector2 from "../vector/Vector2";
+// import Vector2 from "../vector/Vector2";
 import Waypoint from "../vector/Waypoint";
 
 /**
@@ -19,9 +19,9 @@ class AStarPathfinder extends Pathfinder {
   * @constructor
   * @this {AStarPathfinder}
   */
-  constructor(db) {
-    super(db);
-  }
+  // constructor(db) {
+  //   super(db);
+  // }
 
   /**
   * Locate the shortest path from start to end using A*

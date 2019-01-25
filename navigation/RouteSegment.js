@@ -1,5 +1,4 @@
-import Vector2 from "../vector/Vector2";
-
+// import Vector2 from "../vector/Vector2";
 
 /**
 * Class representing a route segment

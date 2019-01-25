@@ -1,6 +1,3 @@
-"use strict";
-
-
 /**
 * Class used to render mapfeatures into mapbox annotations
 * @author Leif Andreas Rudlang
@@ -100,9 +97,12 @@ class MapFeatureRenderer {
   * @return {array} [annotation]
   */
   render(features) {
-    var arr = [], i = 0, image = null;
+    var arr = [],
+        i = 0;
+        // image = null;
+
     for(; i < features.length; i++) {
-      arr.push(features[i].render(this.prefix + i, this.getImage(features[i].type)));
+        arr.push(features[i].render(this.prefix + i, this.getImage(features[i].type)));
     }
     return arr;
   }

@@ -1,7 +1,6 @@
 import RouteRenderer from "./RouteRenderer";
 import Vector2 from "../vector/Vector2";
 import Waypoint from "../vector/Waypoint";
-"use strict";
 
 /**
 * Class representing a route
@@ -243,7 +242,7 @@ class Route {
   * @return {RouteSegment} segment
   */
   get(index) {
-    return this.segments[i];
+    return this.segments[index];
   }
 
   /**
@@ -254,7 +253,7 @@ class Route {
   */
   distance() {
     var i = 1, len = this.path.length, result = 0;
-    for(; i < len; i++) {
+    for(i; i < len; i++) {
       result += this.path[i-1].geographicDistance(this.path[i]);
     }
     return result;

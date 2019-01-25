@@ -1,6 +1,3 @@
-"use strict";
-
-
 /**
 * Pathfinder, Abstract Class
 * @author Leif Andreas Rudlang

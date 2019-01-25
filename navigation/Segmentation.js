@@ -1,5 +1,4 @@
 import Waypoint from "../vector/Waypoint";
-"use strict";
 
 const THRESHOLD = 0.05;
 

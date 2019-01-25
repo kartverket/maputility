@@ -1,5 +1,4 @@
 import jstoxml from "jstoxml";
-"use strict";
 
 /**
 * Class to generate and represent a route following the ECDIS Standard

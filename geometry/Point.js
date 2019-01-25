@@ -1,5 +1,4 @@
 import Geometry from "./Geometry";
-"use strict";
 
 /**
 * Point, Geometry object representing a point
